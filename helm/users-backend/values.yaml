@@ -11,6 +11,10 @@ application:
     imagePrefix: "docker-image"
     version: 1.0.0
     pullPolicy: IfNotPresent
+    logSecurityLevel: debug
+    sslPath: "./cert/"
+    javaOpts: "-XX:MaxRAMPercentage=75.0"
+
 keycloak:
     secretName: keycloak-cert-ca-secret
     realm: realm
@@ -20,24 +24,24 @@ keycloak:
 livenessProbe:
     httpGet:
         scheme: HTTP
-        path: /actuator/health/ready
+        path: /actuator/health
         port: *metricsPort
     initialDelaySeconds: 60
 
 readinessProbe:
     httpGet:
         scheme: HTTP
-        path: /actuator/health/ready
+        path: /actuator/health
         port: *metricsPort
     initialDelaySeconds: 60
 
 resources:
     limits:
-        cpu: 200m
-        memory: 700Mi
+        cpu: 300m
+        memory: 1Gi
     requests:
         cpu: 100m
-        memory: 512Mi
+        memory: 256Mi
 
 monitoring:
     enabled: false

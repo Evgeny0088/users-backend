@@ -29,24 +29,17 @@ spec:
                   volumeMounts:
                       - mountPath: /home/{{ .Values.application.name }}/app/cert
                         name: tls
-                  lifecycle:
-                      postStart:
-                          exec:
-                              command:
-                                  - "/bin/sh"
-                                  - "-c"
-                                  - "keytool -importcert -alias backend_cert -keystore ${JAVA_HOME}/lib/security/cacerts -file ./cert/tls.crt -storepass changeit -noprompt"
-                  command:
-                    - "/bin/sh"
-                  args: ["-c", "while true; do echo print folders:; ls -la; sleep 10;done"]
                   ports:
                       - name: {{ .Values.application.containerPortName }}
                         containerPort: {{ .Values.application.containerPort }}
                         protocol: TCP
-{{/*                  readinessProbe:*/}}
-{{/*                      {{- toYaml .Values.readinessProbe | nindent 24 }}*/}}
-{{/*                  livenessProbe:*/}}
-{{/*                      {{- toYaml .Values.livenessProbe | nindent 24 }}*/}}
+                      - name: actuator
+                        containerPort: {{ .Values.application.metricsPort }}
+                        protocol: TCP
+                  readinessProbe:
+                      {{- toYaml .Values.readinessProbe | nindent 24 }}
+                  livenessProbe:
+                      {{- toYaml .Values.livenessProbe | nindent 24 }}
                   resources:
                       {{- toYaml .Values.resources | nindent 24 }}
                   env:

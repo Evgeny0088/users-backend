@@ -6,3 +6,4 @@ build
 .idea
 endpoints
 local
+app/src/main/resources/keycloak.crt

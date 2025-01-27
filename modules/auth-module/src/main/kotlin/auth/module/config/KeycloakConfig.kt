@@ -2,6 +2,7 @@ package auth.module.config
 
 import auth.module.config.Constants.CLIENT_KEYCLOAK_BEAN
 import auth.module.properties.KeycloakProps
+import auth.module.utils.ServiceUtils
 import jakarta.ws.rs.client.Client
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder
 import org.keycloak.OAuth2Constants
@@ -18,11 +19,12 @@ class KeycloakConfig {
     fun keycloakProperties() = KeycloakProps()
 
     @Bean
-    fun restEasyClient(): Client {
+    fun restEasyClient(keycloakProperties: KeycloakProps): Client {
         return ResteasyClientBuilder
             .newBuilder()
             .connectTimeout(60, TimeUnit.SECONDS)
             .readTimeout(60, TimeUnit.SECONDS)
+            .sslContext(ServiceUtils.setupSSLContext(keycloakProperties))
             .build()
     }
 

@@ -2,8 +2,6 @@
 IMAGE='docker-image/users-backend:1.0.0'
 CHECK_MARK='\xE2\x9C\x94'
 UPSET="\U0001f62D";
-FIRED="\U0001f525";
-DOCKER="\U0001f433";
 JET="\U0001f680";
 
 run_container() {
@@ -16,7 +14,7 @@ run_container() {
 build_image() {
   echo "tests are started ... ${JET}"
 
-  if ! ./gradlew clean test build; then
+  if ! ./gradlew clean build; then
     if ! ./gradlew clean build -x test --parallel --debug --no-daemon --info; then
      echo -e "tests are failed... ${UPSET}" && exit $?
     fi
@@ -33,7 +31,7 @@ build_image() {
 }
 
 # build users-backend image
-#build_image
+build_image
 
 # install helm chart
 helm upgrade --install \
@@ -48,16 +46,17 @@ helm upgrade --install \
     helm-users-backend \
     ./helm/users-backend
 
-    ### test commands ###
+### test commands ###
 
-    # run container in shell and check content
+# run container in shell and check content
     #eval $(minikube docker-env)
     #docker build --build-arg USERNAME=${USERNAME} --tag docker-image/users-backend:1.0.0 .
+    # keytool -list -keystore $JAVA_HOME/lib/security/cacerts -alias backend_cert -storepass changeit -noprompt
     # docker run --rm -it --name users-backend docker-image/users-backend:1.0.0 sh
     # try to find file : find / -type f -name "tls.crt"
     # check user: echo "$USER" or whoami
 
-    # dry-run helm
+# dry-run helm
 #helm template --dry-run --debug \
 #        --set keycloak.realm=$REALM \
 #        --set keycloak.clientId=$CLIENT_ID \

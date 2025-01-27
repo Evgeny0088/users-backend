@@ -9,4 +9,5 @@ data:
     SPRING_PROFILE: {{ default "default" ( .Values.application.profile) | quote }}
     APPLICATION_PORT: {{ default 8080 ( .Values.application.containerPort ) | quote }}
     ACTUATOR_PORT: {{ default 8081 ( .Values.application.metricsPort ) | quote }}
-    JAVA_OPTS: '-XX:MaxRAMPercentage=75.0'
+    LOG_SECURITY_LEVEL: {{ .Values.application.logSecurityLevel | quote }}
+    JAVA_OPTS: {{ .Values.application.javaOpts | quote }}

@@ -15,6 +15,7 @@ keycloak:
     client-secret: do50SQeKjXmfdh19pInaAywMiAT7xRvd
     server-url: ${front-url}
     realm: user-management
+    mode: LOCAL
 
 logging:
     stack-trace:

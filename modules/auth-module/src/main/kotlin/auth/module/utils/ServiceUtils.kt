@@ -1,16 +1,38 @@
 package auth.module.utils
 
-import jakarta.ws.rs.client.Client
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder
-import java.util.concurrent.TimeUnit
+import auth.module.properties.KeycloakProps
+import java.io.InputStream
+import java.nio.file.Files
+import java.security.KeyStore
+import java.security.cert.Certificate
+import java.security.cert.CertificateFactory
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManagerFactory
+import kotlin.io.path.Path
 
 object ServiceUtils {
 
-    fun restEasyClient(): Client {
-        return ResteasyClientBuilder
-            .newBuilder()
-            .connectTimeout(60, TimeUnit.SECONDS)
-            .readTimeout(60, TimeUnit.SECONDS)
-            .build()
+    fun setupSSLContext(keycloakProps: KeycloakProps): SSLContext {
+        val inputStream: InputStream? =
+            if (keycloakProps.mode == "LOCAL") {
+                this::class.java.classLoader.getResourceAsStream("keycloak.crt")
+            } else {
+                Files.newInputStream(Path(keycloakProps.sslPath.plus("tls.crt")))
+            }
+
+        inputStream
+            .use {
+                val certFactory: CertificateFactory = CertificateFactory.getInstance("X.509")
+                val cert: Certificate = certFactory.generateCertificate(it)
+
+                val keystore: KeyStore = KeyStore.getInstance(KeyStore.getDefaultType())
+                keystore.load(null, null)
+                val trustFactory: TrustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
+                keystore.setCertificateEntry("keystore_cert", cert)
+                trustFactory.init(keystore)
+                val context: SSLContext = SSLContext.getInstance("TLS")
+                context.init(null, trustFactory.trustManagers, null)
+                return context
+            }
     }
 }

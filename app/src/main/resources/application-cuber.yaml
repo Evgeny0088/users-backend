@@ -1,6 +1,4 @@
 spring:
-    profiles:
-        active: ${SPRING_PROFILE}
     application:
         name: users-backend
     security:
@@ -20,6 +18,7 @@ keycloak:
     client-secret: ${CLIENT_SECRET}
     server-url: ${front-url}
     realm: ${REALM}
+    sslPath: ${SSL_PATH}
 
 management:
     server:
@@ -41,4 +40,4 @@ logging:
             springframework:
                 security:
                     web:
-                        server: debug
+                        server: ${LOG_SECURITY_LEVEL}
