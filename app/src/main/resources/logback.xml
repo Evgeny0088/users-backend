@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true">
+
+    <springProfile name="local">
+
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>%-4relative %d %-5level [ thread: %t ] [traceId: %mdc{traceId}, spanId: %mdc{spanId}] %-55logger{13} | %m %n</pattern>
+                <charset>utf8</charset>
+            </encoder>
+        </appender>
+
+    </springProfile>
+
+    <root level="INFO" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>

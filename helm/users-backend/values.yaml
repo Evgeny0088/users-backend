@@ -1,0 +1,45 @@
+application:
+    profile: cuber
+    name: users-backend
+    namespace: keycloak-ns
+    containerPort: 8080
+    containerPortName: app-port
+    metricsPort: &metricsPort 8081
+    serviceType: ClusterIP
+    servicePort: 8080
+    replicaCount: 1
+    imagePrefix: "docker-image"
+    version: 1.0.0
+    pullPolicy: IfNotPresent
+keycloak:
+    secretName: keycloak-cert-ca-secret
+    realm: realm
+    clientId: clientId
+    clientSecret: client-secret
+
+livenessProbe:
+    httpGet:
+        scheme: HTTP
+        path: /actuator/health/ready
+        port: *metricsPort
+    initialDelaySeconds: 60
+
+readinessProbe:
+    httpGet:
+        scheme: HTTP
+        path: /actuator/health/ready
+        port: *metricsPort
+    initialDelaySeconds: 60
+
+resources:
+    limits:
+        cpu: 200m
+        memory: 700Mi
+    requests:
+        cpu: 100m
+        memory: 512Mi
+
+monitoring:
+    enabled: false
+    metricsPath:
+

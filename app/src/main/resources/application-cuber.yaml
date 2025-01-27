@@ -1,0 +1,44 @@
+spring:
+    profiles:
+        active: ${SPRING_PROFILE}
+    application:
+        name: users-backend
+    security:
+        oauth2:
+            resourceserver:
+                jwt:
+                    issuer-uri: ${front-url}/${realm}
+
+server:
+    port: ${APPLICATION_PORT}
+
+front-url: ${KC_SERVICE_URL}
+realm: realms/${REALM}
+
+keycloak:
+    client-id: ${CLIENT_ID}
+    client-secret: ${CLIENT_SECRET}
+    server-url: ${front-url}
+    realm: ${REALM}
+
+management:
+    server:
+        port: ${ACTUATOR_PORT}
+    endpoints:
+        web.exposure.include: "*"
+    endpoint:
+        shutdown:
+            enabled: true
+        prometheus:
+            enabled: true
+
+logging:
+    stack-trace:
+        print: true
+        lines-max: 300
+    level:
+        org:
+            springframework:
+                security:
+                    web:
+                        server: debug

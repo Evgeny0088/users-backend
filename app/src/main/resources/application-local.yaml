@@ -1,0 +1,28 @@
+spring:
+    application:
+        name: users-backend
+    security:
+        oauth2:
+            resourceserver:
+                jwt:
+                    issuer-uri: ${front-url}/${realm}
+
+front-url: https://front-keycloak.com
+realm: realms/user-management
+
+keycloak:
+    client-id: user-app-id
+    client-secret: do50SQeKjXmfdh19pInaAywMiAT7xRvd
+    server-url: ${front-url}
+    realm: user-management
+
+logging:
+    stack-trace:
+        print: true
+        lines-max: 300
+    level:
+        org:
+            springframework:
+                security:
+                    web:
+                        server: debug

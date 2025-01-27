@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: {{ .Values.application.name }}
+    namespace: {{ .Values.application.namespace }}
+    labels:
+    {{- include "common.labels" . | indent 8 }}
+spec:
+    replicas: {{ .Values.application.replicaCount }}
+    selector:
+        matchLabels:
+        {{- include "common.labels" . | indent 16 }}
+    template:
+        metadata:
+            labels:
+             {{- include "common.labels" . | indent 24 }}
+        spec:
+            volumes:
+                - name: tls
+                  secret:
+                      secretName: {{ .Values.keycloak.secretName }}
+                      items:
+                          - key: 'tls.crt'
+                            path: tls.crt
+            containers:
+                - name: {{ .Values.application.name }}
+                  image: "{{ .Values.application.imagePrefix }}/{{ .Values.application.name }}:{{ .Values.application.version }}"
+                  imagePullPolicy: {{ .Values.application.pullPolicy }}
+                  volumeMounts:
+                      - mountPath: /home/{{ .Values.application.name }}/app/cert
+                        name: tls
+                  lifecycle:
+                      postStart:
+                          exec:
+                              command:
+                                  - "/bin/sh"
+                                  - "-c"
+                                  - "keytool -importcert -alias backend_cert -keystore ${JAVA_HOME}/lib/security/cacerts -file ./cert/tls.crt -storepass changeit -noprompt"
+                  command:
+                    - "/bin/sh"
+                  args: ["-c", "while true; do echo print folders:; ls -la; sleep 10;done"]
+                  ports:
+                      - name: {{ .Values.application.containerPortName }}
+                        containerPort: {{ .Values.application.containerPort }}
+                        protocol: TCP
+{{/*                  readinessProbe:*/}}
+{{/*                      {{- toYaml .Values.readinessProbe | nindent 24 }}*/}}
+{{/*                  livenessProbe:*/}}
+{{/*                      {{- toYaml .Values.livenessProbe | nindent 24 }}*/}}
+                  resources:
+                      {{- toYaml .Values.resources | nindent 24 }}
+                  env:
+                      - name: KC_SERVICE_URL
+                        valueFrom:
+                            configMapKeyRef:
+                                name: keycloak-config-map
+                                key: KC_SERVICE_URL
+                  envFrom:
+                      - configMapRef:
+                            name: {{ .Values.application.name}}-config-map
+                      - secretRef:
+                            name: {{ .Values.application.name}}-secret

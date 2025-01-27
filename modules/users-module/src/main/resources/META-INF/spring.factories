@@ -1,0 +1,3 @@
+# Auto Configure
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+users.backend.modules.users.UsersStarter

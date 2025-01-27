@@ -1,0 +1,20 @@
+{{- if .Values.monitoring.enabled -}}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+    name: {{ .Values.application.name}}
+    namespace: {{ .Values.application.namespace }}
+    labels:
+        serviceMonitorSelector: prometheus
+spec:
+    endpoints:
+        - interval: 10s
+          targetPort: {{ .Values.application.metricsPort }}
+          path: {{ default "/actuator/prometheus" ( .Values.monitoring.metricsPath) | quote }}
+    namespaceSelector:
+        matchNames:
+            - {{ .Values.application.namespace }}
+    selector:
+        matchLabels:
+            prometheus-monitored: "true"
+{{- end -}}
