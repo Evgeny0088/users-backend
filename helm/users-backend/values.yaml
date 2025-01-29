@@ -1,7 +1,7 @@
 application:
     profile: cuber
     name: users-backend
-    namespace: keycloak-ns
+    namespace: application-ns
     containerPort: 8080
     containerPortName: app-port
     metricsPort: &metricsPort 8081
@@ -16,12 +16,15 @@ application:
     javaOpts: "-XX:MaxRAMPercentage=75.0"
 
 keycloak:
+    serviceName: keycloak-service
+    namespace: keycloak-ns
     secretName: keycloak-cert-ca-secret
     realm: realm
     clientId: clientId
     clientSecret: client-secret
 
 livenessProbe:
+    failureThreshold: 10
     httpGet:
         scheme: HTTP
         path: /actuator/health
@@ -29,6 +32,7 @@ livenessProbe:
     initialDelaySeconds: 60
 
 readinessProbe:
+    failureThreshold: 10
     httpGet:
         scheme: HTTP
         path: /actuator/health
@@ -44,6 +48,9 @@ resources:
         memory: 256Mi
 
 monitoring:
-    enabled: false
-    metricsPath:
+    portName: actuator
+    enabled: true
+    monitoringLabelName: prometheus-monitored
+    monitoringLabelValue: "prometheus"
+    metricsPath: "/actuator/metrics"
 

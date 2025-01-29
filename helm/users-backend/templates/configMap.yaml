@@ -6,6 +6,7 @@ metadata:
     labels:
     {{- include "common.labels" . | indent 8 }}
 data:
+    KC_SERVICE_URL: https://{{ .Values.keycloak.serviceName }}.{{ .Values.keycloak.namespace }}.svc.cluster.local:443
     SPRING_PROFILE: {{ default "default" ( .Values.application.profile) | quote }}
     APPLICATION_PORT: {{ default 8080 ( .Values.application.containerPort ) | quote }}
     ACTUATOR_PORT: {{ default 8081 ( .Values.application.metricsPort ) | quote }}

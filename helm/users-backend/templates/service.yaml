@@ -13,5 +13,9 @@ spec:
           name: http
           targetPort: {{ .Values.application.containerPortName }}
           protocol: TCP
+        - port: {{ .Values.application.metricsPort }}
+          name: {{ .Values.monitoring.portName }}
+          targetPort: {{ .Values.monitoring.portName }}
+          protocol: TCP
     selector:
     {{- include "common.labels" . | indent 8 -}}

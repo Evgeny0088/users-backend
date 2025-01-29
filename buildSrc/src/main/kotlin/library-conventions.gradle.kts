@@ -15,6 +15,7 @@ dependencies {
     implementation(platform("io.micrometer:micrometer-tracing-bom:${properties["micrometerVersion"]}"))
     implementation("io.micrometer:micrometer-tracing")
     implementation("io.micrometer:micrometer-tracing-bridge-otel")
+    implementation("io.micrometer:micrometer-registry-prometheus")
 
     // jackson mapper
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:${properties["jacksonMapperVersion"]}")

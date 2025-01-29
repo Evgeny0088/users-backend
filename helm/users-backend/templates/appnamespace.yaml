@@ -1,4 +1,4 @@
-{{- if not (lookup "v1" "Namespace" "" "keycloak-ns") }}
+{{- if not (lookup "v1" "Namespace" "" "application-ns") }}
 apiVersion: v1
 kind: Namespace
 metadata:

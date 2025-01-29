@@ -33,7 +33,7 @@ spec:
                       - name: {{ .Values.application.containerPortName }}
                         containerPort: {{ .Values.application.containerPort }}
                         protocol: TCP
-                      - name: actuator
+                      - name: {{ .Values.monitoring.portName }}
                         containerPort: {{ .Values.application.metricsPort }}
                         protocol: TCP
                   readinessProbe:
@@ -42,12 +42,6 @@ spec:
                       {{- toYaml .Values.livenessProbe | nindent 24 }}
                   resources:
                       {{- toYaml .Values.resources | nindent 24 }}
-                  env:
-                      - name: KC_SERVICE_URL
-                        valueFrom:
-                            configMapKeyRef:
-                                name: keycloak-config-map
-                                key: KC_SERVICE_URL
                   envFrom:
                       - configMapRef:
                             name: {{ .Values.application.name}}-config-map

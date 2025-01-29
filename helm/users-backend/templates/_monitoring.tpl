@@ -10,7 +10,7 @@ monitoring labels
 */}}
 {{- define "monitoring.labels" -}}
 {{ if .Values.monitoring.enabled }}
-prometheus-monitored: "true"
+{{ .Values.monitoring.monitoringLabelName }}: {{ .Values.monitoring.monitoringLabelValue }}
 {{- end }}
 {{- end }}
 

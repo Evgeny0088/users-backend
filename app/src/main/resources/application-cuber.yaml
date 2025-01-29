@@ -24,12 +24,10 @@ management:
     server:
         port: ${ACTUATOR_PORT}
     endpoints:
-        web.exposure.include: "*"
-    endpoint:
-        shutdown:
-            enabled: true
-        prometheus:
-            enabled: true
+        web.exposure.include: health, prometheus
+        web:
+            path-mapping:
+              prometheus: "metrics"
 
 logging:
     stack-trace:

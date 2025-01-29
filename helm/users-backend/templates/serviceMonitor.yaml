@@ -2,10 +2,10 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-    name: {{ .Values.application.name}}
+    name: {{ .Values.application.name}}-monitor
     namespace: {{ .Values.application.namespace }}
     labels:
-        serviceMonitorSelector: prometheus
+        app-monitoring: prometheus
 spec:
     endpoints:
         - interval: 10s
@@ -16,5 +16,5 @@ spec:
             - {{ .Values.application.namespace }}
     selector:
         matchLabels:
-            prometheus-monitored: "true"
+          {{ .Values.monitoring.monitoringLabelName }}: {{ .Values.monitoring.monitoringLabelValue }}
 {{- end -}}
