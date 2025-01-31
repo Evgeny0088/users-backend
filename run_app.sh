@@ -6,11 +6,11 @@ JET="\U0001f680";
 FIRED="\U0001f525";
 
 build_image() {
-  echo "tests are started ... ${JET}"
+  echo -e "tests are started ... ${JET}"
 
   if ! ./gradlew clean build; then
     if ! ./gradlew clean build -x test --parallel --debug --no-daemon --info; then
-     echo "tests are failed... ${UPSET}" && exit $?
+     echo -e "tests are failed... ${UPSET}" && exit $?
     fi
   else
      echo -e "tests are passed, jar file is created!... ${CHECK_MARK}\n"
@@ -24,14 +24,14 @@ build_image() {
   fi
 
     if ! docker build --build-arg USERNAME=${USERNAME} --tag ${IMAGE} .; then
-       echo "fails to create docker image... ${UPSET}" && exit $?
+       echo -e "fails to create docker image... ${UPSET}" && exit $?
     else
        echo -e "image is created!... ${CHECK_MARK}\n"
     fi
 }
 
 # build users-backend image
-#build_image
+build_image
 
 # install helm chart
 helm upgrade --install \

@@ -20,6 +20,12 @@ keycloak:
 management:
     server:
         port: 8081
+    metrics:
+        distribution:
+            slo:
+                http.server.requests: 100ms, 200ms, 300ms, 400ms, 500ms
+            percentiles-histogram:
+                "[http.server.requests]": true
     endpoints:
         web.exposure.include: health, prometheus
         web:

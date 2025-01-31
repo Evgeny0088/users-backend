@@ -10,7 +10,13 @@ import exception.handler.module.config.MessageKeys.KEY_REGISTRATION_ERROR
 import exception.handler.module.config.MessageResolver
 import exception.handler.module.enum.ErrorCode
 import exception.handler.module.exception.CustomException
+import instrumentation.module.config.InstrumentationConfig.registerGauge
+import instrumentation.module.config.InstrumentationConfig.registerTimer
+import instrumentation.module.config.InstrumentationConfig.timeMetric
+import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.core.instrument.Timer
 import jakarta.ws.rs.client.Client
+import kotlinx.coroutines.delay
 import org.keycloak.OAuth2Constants
 import org.keycloak.admin.client.Keycloak
 import org.keycloak.admin.client.KeycloakBuilder
@@ -21,6 +27,8 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import service.config.module.utils.LoggerProvider.logger
 import java.util.*
+import java.util.concurrent.atomic.AtomicInteger
+import kotlin.random.Random
 
 @Service
 class KeycloakService(
@@ -30,8 +38,17 @@ class KeycloakService(
     private val keycloakProps: KeycloakProps,
     private val userMapper: UserMapper,
     private val tokenMapper: TokenMapper,
-    private val messageResolver: MessageResolver
+    private val messageResolver: MessageResolver,
+    meterRegistry: MeterRegistry,
 ) {
+
+    private var gaugeValue: AtomicInteger = AtomicInteger(0)
+    private lateinit var timed: Timer
+
+    init {
+        registerGauge("gauge.random.value", gaugeValue, meterRegistry)
+        timed = registerTimer("profile.timed", "measure time of profile request", meterRegistry)
+    }
 
     private val logger = logger<KeycloakService>()
 
@@ -90,6 +107,22 @@ class KeycloakService(
         keycloak.realm(keycloakProps.realm).users().get(userId).remove()
         logger.info("User ( id: {} ) is deleted.", userId)
         return BooleanRequest(true)
+    }
+
+    // demo method only
+    suspend fun profile(): String {
+        var result = ""
+        timeMetric(timed) {
+            val random = Random.nextInt(0, 5000)
+            logger.info("Endpoint /api/v1/profile is called! ...")
+            gaugeValue.set(random)
+            delay(random.toLong())
+            if (random % 3 == 0) {
+                throw CustomException("Profile error", 400, ErrorCode.INPUT_BAD_REQUEST)
+            }
+            result=  "done"
+        }
+        return result
     }
 
     private fun assignRole(role: String?, roles: List<RoleRepresentation>): RoleRepresentation {

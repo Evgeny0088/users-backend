@@ -23,3 +23,5 @@ include("modules:exceptionHandler-module")
 findProject(":modules:exceptionHandler-module")?.name = "exceptionHandler-module"
 include("modules:service-config-module")
 findProject(":modules:service-config-module")?.name = "service-config-module"
+include("modules:instrumentation")
+findProject(":modules:instrumentation")?.name = "instrumentation"

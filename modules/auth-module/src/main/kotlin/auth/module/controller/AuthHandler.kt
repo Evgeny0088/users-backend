@@ -24,7 +24,9 @@ class AuthHandler(
     private val logoutValidator: LogoutRequestValidator
 ) {
 
-    suspend fun profile(req: ServerRequest): ServerResponse = ok().bodyValueAndAwait("done")
+    suspend fun profile(req: ServerRequest): ServerResponse = ok().bodyValueAndAwait(keycloakService.profile())
+
+    suspend fun timedRequest(req: ServerRequest): ServerResponse = ok().bodyValueAndAwait("done")
 
     suspend fun signUp(signUpRequest: ServerRequest): ServerResponse {
         val locale = retrieveLocale(signUpRequest)

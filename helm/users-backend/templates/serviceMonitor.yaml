@@ -8,7 +8,7 @@ metadata:
         app-monitoring: prometheus
 spec:
     endpoints:
-        - interval: 10s
+        - interval: 20s
           targetPort: {{ .Values.application.metricsPort }}
           path: {{ default "/actuator/prometheus" ( .Values.monitoring.metricsPath) | quote }}
     namespaceSelector:
