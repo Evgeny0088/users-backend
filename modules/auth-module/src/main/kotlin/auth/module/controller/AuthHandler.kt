@@ -3,6 +3,7 @@ package auth.module.controller
 import auth.module.dto.LoginRequest
 import auth.module.dto.LogoutRequest
 import auth.module.dto.SignUpRequest
+import auth.module.service.AuthService
 import auth.module.service.KeycloakService
 import auth.module.validator.LoginRequestValidator
 import auth.module.validator.LogoutRequestValidator
@@ -18,6 +19,7 @@ import java.util.Locale
 @Service
 class AuthHandler(
     private val keycloakService: KeycloakService,
+    private val authService: AuthService,
     private val messageResolver: MessageResolver,
     private val signValidator: SignRequestValidator,
     private val loginValidator: LoginRequestValidator,
@@ -26,7 +28,7 @@ class AuthHandler(
 
     suspend fun profile(req: ServerRequest): ServerResponse = ok().bodyValueAndAwait(keycloakService.profile())
 
-    suspend fun timedRequest(req: ServerRequest): ServerResponse = ok().bodyValueAndAwait("done")
+    suspend fun timedRequest(req: ServerRequest): ServerResponse = ok().bodyValueAndAwait(authService.wellKnown())
 
     suspend fun signUp(signUpRequest: ServerRequest): ServerResponse {
         val locale = retrieveLocale(signUpRequest)

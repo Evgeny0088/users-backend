@@ -14,12 +14,16 @@ class RouterController {
         return coRouter {
             "/api/v1/auth".nest {
                 /*  for test only*/ GET("/profile", authHandler::profile)
-                /* for test only */  GET("/timed-request", authHandler::timedRequest)
                 POST("/sign-up", authHandler::signUp)
                 POST("/login", authHandler::login)
                 POST("/logout", authHandler::logout)
                 DELETE("/{user-id}", authHandler::deleteUser)
             }
         }
+            .and(coRouter {
+                "/api/v1/rest".nest {
+                    GET("/service", authHandler::timedRequest)
+                }
+            })
     }
 }

@@ -5,10 +5,10 @@ spring:
         oauth2:
             resourceserver:
                 jwt:
-                    issuer-uri: ${front-url}/${realm}
+                    issuer-uri: ${front-url}/${realmsPath}
 
 front-url: https://front-keycloak.com
-realm: realms/user-management
+realmsPath: realms/user-management
 
 keycloak:
     client-id: user-app-id
@@ -42,3 +42,4 @@ logging:
                 security:
                     web:
                         server: debug
+        root: debug

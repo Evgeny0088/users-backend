@@ -3,7 +3,6 @@ package auth.module.test
 import auth.module.dto.SignUpRequest
 import auth.module.mapper.TokenMapperImpl
 import auth.module.mapper.UserMapperImpl
-import auth.module.service.AuthService
 import io.kotlintest.shouldBe
 import org.junit.jupiter.api.Test
 import org.keycloak.representations.AccessTokenResponse
@@ -11,15 +10,8 @@ import org.keycloak.representations.idm.CredentialRepresentation
 
 class AuthStarterTest {
 
-    private val authService: AuthService = AuthService()
     private var userMapper: UserMapperImpl = UserMapperImpl()
     private val tokenMapper: TokenMapperImpl = TokenMapperImpl()
-
-    @Test
-    fun `mocked test`() {
-        authService.tested()
-        println("test is passed")
-    }
 
     @Test
     fun `user mapper test`() {

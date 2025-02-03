@@ -5,13 +5,13 @@ spring:
         oauth2:
             resourceserver:
                 jwt:
-                    issuer-uri: ${front-url}/${realm}
+                    jwk-set-uri: ${front-url}/${realmsPath}/protocol/openid-connect/certs
 
 server:
     port: ${APPLICATION_PORT}
 
 front-url: ${KC_SERVICE_URL}
-realm: realms/${REALM}
+realmsPath: realms/${REALM}
 
 keycloak:
     client-id: ${CLIENT_ID}

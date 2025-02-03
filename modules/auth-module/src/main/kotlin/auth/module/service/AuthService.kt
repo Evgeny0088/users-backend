@@ -5,8 +5,9 @@ import org.springframework.stereotype.Service
 @Service
 class AuthService {
 
-    fun tested() {
-        println("auth service bean")
+    suspend fun wellKnown(): String {
+        return "done"
     }
+
 
 }
