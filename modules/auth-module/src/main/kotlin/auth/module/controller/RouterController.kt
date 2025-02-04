@@ -25,5 +25,8 @@ class RouterController {
                     GET("/service", authHandler::timedRequest)
                 }
             })
+            .and(coRouter {
+            GET("/api/v1/admin", authHandler::adminPage)
+            })
     }
 }

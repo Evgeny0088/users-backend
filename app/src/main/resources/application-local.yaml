@@ -5,7 +5,7 @@ spring:
         oauth2:
             resourceserver:
                 jwt:
-                    issuer-uri: ${front-url}/${realmsPath}
+                    jwk-set-uri: ${front-url}/${realmsPath}/protocol/openid-connect/certs
 
 front-url: https://front-keycloak.com
 realmsPath: realms/user-management

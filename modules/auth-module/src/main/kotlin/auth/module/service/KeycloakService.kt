@@ -1,6 +1,6 @@
 package auth.module.service
 
-import auth.module.config.Constants.CLIENT_KEYCLOAK_BEAN
+import auth.module.Constants.CLIENT_KEYCLOAK_BEAN
 import auth.module.dto.*
 import auth.module.mapper.TokenMapper
 import auth.module.mapper.UserMapper

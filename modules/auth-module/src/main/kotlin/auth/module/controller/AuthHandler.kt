@@ -30,6 +30,8 @@ class AuthHandler(
 
     suspend fun timedRequest(req: ServerRequest): ServerResponse = ok().bodyValueAndAwait(authService.wellKnown())
 
+    suspend fun adminPage(req: ServerRequest): ServerResponse = ok().bodyValueAndAwait(authService.wellKnown())
+
     suspend fun signUp(signUpRequest: ServerRequest): ServerResponse {
         val locale = retrieveLocale(signUpRequest)
         val body = retrieveRequiredBodyOrFail<SignUpRequest>(signUpRequest, locale)

@@ -1,6 +1,6 @@
 package auth.module.config
 
-import auth.module.config.Constants.CLIENT_KEYCLOAK_BEAN
+import auth.module.Constants.CLIENT_KEYCLOAK_BEAN
 import auth.module.properties.KeycloakProps
 import auth.module.utils.ServiceUtils
 import jakarta.ws.rs.client.Client
@@ -10,10 +10,17 @@ import org.keycloak.admin.client.Keycloak
 import org.keycloak.admin.client.KeycloakBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.convert.converter.Converter
+import org.springframework.security.authentication.AbstractAuthenticationToken
+import org.springframework.security.oauth2.jwt.Jwt
+import reactor.core.publisher.Mono
 import java.util.concurrent.TimeUnit
 
 @Configuration(proxyBeanMethods = false)
 class KeycloakConfig {
+
+    @Bean
+    fun keycloakRolesConverter(): Converter<Jwt, Mono<AbstractAuthenticationToken>> = KeycloakRolesConverter()
 
     @Bean
     fun keycloakProperties() = KeycloakProps()
