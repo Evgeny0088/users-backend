@@ -5,6 +5,7 @@ import auth.module.dto.LogoutRequest
 import auth.module.dto.SignUpRequest
 import auth.module.service.AuthService
 import auth.module.service.KeycloakService
+import auth.module.utils.ServiceUtils.retrieveLocale
 import auth.module.validator.LoginRequestValidator
 import auth.module.validator.LogoutRequestValidator
 import auth.module.validator.SignRequestValidator
@@ -66,12 +67,5 @@ class AuthHandler(
             )
         }
         return request.awaitBody<B>()
-    }
-
-    private fun retrieveLocale(request: ServerRequest): Locale {
-        return request.headers().acceptLanguage()
-            .takeIf { it.isNotEmpty() }
-            ?.let { Locale(it[0].range) }
-            ?: Locale("en")
     }
 }

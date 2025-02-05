@@ -19,7 +19,7 @@ class KeycloakRolesConverter : Converter<Jwt, Mono<AbstractAuthenticationToken>>
     }
 
     private fun extractResourceRoles(jwt: Jwt): Collection<GrantedAuthority?> {
-        val roles = jwt.getClaimAsStringList(Constants.CLIENT_ROLES_KEY).orEmpty()
+        val roles = jwt.getClaimAsStringList(Constants.CLAIM_CLIENT_ROLES_KEY).orEmpty()
         return roles
             .map { role: String ->
                 SimpleGrantedAuthority(role)

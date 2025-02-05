@@ -6,6 +6,7 @@ enum class ErrorCode(
 ) {
     USER_NOT_REGISTERED(400, BusinessCode.ERR_402),
     USER_LOGIN_FAILED(401, BusinessCode.ERR_401),
+    TOKEN_ERROR_401(401, BusinessCode.ERR_TOKEN_401),
     USER_IS_FORBIDDEN(403, BusinessCode.ERR_403),
     INPUT_BAD_REQUEST(400, BusinessCode.ERR_400),
     USER_IS_NOT_DELETED(400, BusinessCode.ERR_410),

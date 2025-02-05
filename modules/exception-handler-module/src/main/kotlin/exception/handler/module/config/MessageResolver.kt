@@ -2,7 +2,6 @@ package exception.handler.module.config
 
 import jakarta.annotation.PostConstruct
 import org.apache.commons.lang3.StringUtils
-import org.springframework.context.i18n.LocaleContextHolder
 import org.springframework.core.io.ResourceLoader
 import org.springframework.core.io.support.ResourcePatternUtils
 import org.springframework.stereotype.Component
@@ -36,7 +35,7 @@ class MessageResolver(private val resourceLoader: ResourceLoader) {
         locale: Locale? = null,
         vararg args: String? = arrayOfNulls(1)
     ): String {
-        val l = locale ?: LocaleContextHolder.getLocale()
+        val l = locale ?: Locale("en")
         return MessageFormat.format(messageMap
             .getOrDefault(l.language, messageMap["en"])
             ?.getProperty(key)

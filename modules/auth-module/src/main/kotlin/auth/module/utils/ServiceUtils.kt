@@ -1,11 +1,13 @@
 package auth.module.utils
 
 import auth.module.properties.KeycloakProps
+import org.springframework.web.reactive.function.server.ServerRequest
 import java.io.InputStream
 import java.nio.file.Files
 import java.security.KeyStore
 import java.security.cert.Certificate
 import java.security.cert.CertificateFactory
+import java.util.*
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManagerFactory
 import kotlin.io.path.Path
@@ -34,5 +36,12 @@ object ServiceUtils {
                 context.init(null, trustFactory.trustManagers, null)
                 return context
             }
+    }
+
+    fun retrieveLocale(request: ServerRequest): Locale {
+        return request.headers().acceptLanguage()
+            .takeIf { it.isNotEmpty() }
+            ?.let { Locale(it[0].range) }
+            ?: Locale("en")
     }
 }

@@ -60,6 +60,8 @@ class KeycloakService(
         val role = assignRole(request.role, roles)
         val user = userMapper.toRepresentation(request)
 
+        usersResource.get("").userSessions
+
         var savedUser = UserRepresentation()
 
         usersResource.create(user).use { response ->

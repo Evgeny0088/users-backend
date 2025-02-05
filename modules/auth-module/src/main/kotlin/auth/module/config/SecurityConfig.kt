@@ -22,9 +22,13 @@ class SecurityConfig {
     @Bean
     fun securityFilterChain(
         http: ServerHttpSecurity,
-        keycloakRolesConverter: Converter<Jwt, Mono<AbstractAuthenticationToken>>): SecurityWebFilterChain {
+        keycloakRolesConverter: Converter<Jwt, Mono<AbstractAuthenticationToken>>,
+        authenticationEntryPoint: AuthenticationEntryPoint,
+        authenticationHandler: AuthenticationHandler,
+        accessDeniedHandler: AccessDeniedHandler
+    ): SecurityWebFilterChain {
         return http
-            .csrf { csrf -> csrf.disable()}
+            .csrf { csrf -> csrf.disable() }
             .authorizeExchange {
                     c -> c
                         .pathMatchers(*PERMITTED_ENDPOINTS).permitAll()
@@ -35,12 +39,9 @@ class SecurityConfig {
             .oauth2ResourceServer { auth ->
                 auth
                     .jwt { it.jwtAuthenticationConverter(keycloakRolesConverter) }
-
-                    .authenticationFailureHandler { exchange, exception ->
-                        AuthenticationHandler().onAuthenticationFailure(exchange, exception)}
-
-                    .accessDeniedHandler { exchange, denied ->
-                        AccessDeniedHandler().handle(exchange, denied)}
+                    .authenticationEntryPoint { exchange, ex ->  authenticationEntryPoint.commence(exchange, ex) }
+                    .authenticationFailureHandler { exchange, exception -> authenticationHandler.onAuthenticationFailure(exchange, exception) }
+                    .accessDeniedHandler { exchange, denied -> accessDeniedHandler.handle(exchange, denied) }
             }
             .addFilterAfter(JwtFilter(), SecurityWebFiltersOrder.SECURITY_CONTEXT_SERVER_WEB_EXCHANGE)
             .build()
