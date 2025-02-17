@@ -1,0 +1,42 @@
+{{- if .Values.global.migrationEnabled -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+    name: {{ .Values.migration.name }}
+    namespace: {{ .Values.global.applicationNs }}
+spec:
+    ttlSecondsAfterFinished: 120
+    backoffLimit: 3
+    template:
+        spec:
+            restartPolicy: Never
+            containers:
+                - name: {{ .Values.migration.name }}
+                  image: "{{ .Values.migration.imagePrefix }}/{{ .Values.migration.name}}:{{ .Values.migration.version}}"
+                  envFrom:
+                      - configMapRef:
+                            name: {{ .Values.global.usersDbConfigMap }}
+                  env:
+                      - name: DB_USERNAME
+                        valueFrom:
+                            secretKeyRef:
+                                name: {{ .Values.global.usersDbSecret }}
+                                key: username
+                      - name: DB_PASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: {{ .Values.global.usersDbSecret }}
+                                key: password
+                  command:
+                      - "/bin/sh"
+                      - "-c"
+                  args:
+                      - |
+                          liquibase \
+                          --changeLogFile=migrations/v.1.0/db.changelog-v.1.0.yml \
+                          --url=${JDBC_DB_URL} \
+                          --username=${DB_USERNAME} \
+                          --password=${DB_PASSWORD} \
+                          --logLevel=${MIGRATION_LOG_LEVEL} \
+                          update
+  {{- end -}}

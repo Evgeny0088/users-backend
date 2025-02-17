@@ -6,6 +6,17 @@ spring:
             resourceserver:
                 jwt:
                     jwk-set-uri: ${front-url}/${realmsPath}/protocol/openid-connect/certs
+    liquibase:
+        enabled: false
+    r2dbc:
+        username: ${DB_USERNAME}
+        password: ${DB_PASSWORD}
+        url: ${R2DBC_DB_URL}
+    datasource:
+        driver-class-name: org.postgresql.Driver
+    jpa:
+        hibernate:
+            ddl-auto: update
 
 server:
     port: ${APPLICATION_PORT}

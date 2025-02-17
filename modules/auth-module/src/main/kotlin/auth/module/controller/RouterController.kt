@@ -21,8 +21,9 @@ class RouterController {
             }
         }
             .and(coRouter {
-                "/api/v1/rest".nest {
-                    GET("/service", authHandler::timedRequest)
+                "/api/v1/employees".nest {
+                    POST("/save", authHandler::testSave)
+                    GET("/department/{dep-name}", authHandler::getDepartment)
                 }
             })
             .and(coRouter {

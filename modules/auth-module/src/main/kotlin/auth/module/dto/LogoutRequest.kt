@@ -1,6 +1,11 @@
 package auth.module.dto
 
-class LogoutRequest {
-    val userId: String = ""
-    val username: String = ""
-}
+import exception.handler.module.dto.ValidatedDto
+import jakarta.validation.constraints.NotBlank
+
+data class LogoutRequest(
+    @field:NotBlank
+    val userId: String,
+    @field:NotBlank
+    val username: String
+): ValidatedDto()

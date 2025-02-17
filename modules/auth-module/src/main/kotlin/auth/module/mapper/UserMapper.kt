@@ -11,8 +11,7 @@ import org.mapstruct.*
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
     nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS
 )
-
-abstract class UserMapper: GenericMapper<SignUpRequest, UserRepresentation, UserResponse> {
+abstract class UserMapper: GenericAuthMapper<SignUpRequest, UserRepresentation, UserResponse> {
 
     @AfterMapping
     fun setupCredentials(@MappingTarget userRepresentation: UserRepresentation, req: SignUpRequest) {

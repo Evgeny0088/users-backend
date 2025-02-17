@@ -3,7 +3,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
     name: {{ .Values.application.name}}-monitor
-    namespace: {{ .Values.application.namespace }}
+    namespace: {{ .Values.global.applicationNs }}
     labels:
         app-monitoring: prometheus
 spec:
@@ -13,7 +13,7 @@ spec:
           path: {{ default "/actuator/prometheus" ( .Values.monitoring.metricsPath) | quote }}
     namespaceSelector:
         matchNames:
-            - {{ .Values.application.namespace }}
+            - {{ .Values.global.applicationNs }}
     selector:
         matchLabels:
           {{ .Values.monitoring.monitoringLabelName }}: {{ .Values.monitoring.monitoringLabelValue }}

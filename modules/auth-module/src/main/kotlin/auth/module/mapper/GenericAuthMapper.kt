@@ -1,6 +1,6 @@
 package auth.module.mapper
 
-interface GenericMapper<Req, Rep, Dto> {
+interface GenericAuthMapper<Req, Rep, Dto> {
 
     fun toRepresentation(req: Req): Rep
 

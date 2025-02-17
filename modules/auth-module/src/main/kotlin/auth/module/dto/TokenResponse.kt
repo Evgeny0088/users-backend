@@ -1,6 +1,6 @@
 package auth.module.dto
 
-data class Token(
+data class TokenResponse(
     val token: String,
     val expiresIn: Long,
     val refreshExpiresIn: Long,

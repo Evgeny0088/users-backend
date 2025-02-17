@@ -1,0 +1,6 @@
+migration:
+    name: users-backend-migration
+    imagePrefix: "docker-image"
+    version: 1.0.0
+    pullPolicy: IfNotPresent
+

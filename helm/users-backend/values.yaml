@@ -1,7 +1,12 @@
+global:
+    applicationNs: application-ns
+    usersDbConfigMap: users-db-config-map
+    usersDbSecret: users-db-secret
+    migrationEnabled: true
+
 application:
     profile: cuber
     name: users-backend
-    namespace: application-ns
     containerPort: 8080
     containerPortName: app-port
     metricsPort: &metricsPort 8081

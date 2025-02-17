@@ -1,11 +1,26 @@
 #!/bin/bash
-IMAGE='docker-image/users-backend:1.0.0'
+APP_IMAGE='docker-image/users-backend:1.0.0'
+MIGRATION_IMAGE='docker-image/users-backend-migration:1.0.0'
 CHECK_MARK='\xE2\x9C\x94'
 UPSET="\U0001f62D";
 JET="\U0001f680";
 FIRED="\U0001f525";
 
-build_image() {
+inspect_and_build_image() {
+    if docker image inspect $1 >/dev/null 2>&1; then
+      echo -e "Found old image, removing it ...${FIRED}\n"
+      docker rmi -f $1
+      echo -e "\n"
+    fi
+
+    if ! docker build --build-arg USERNAME=$2 --tag $1 $3; then
+      echo -e "fails to create docker image... ${UPSET}" && exit $?
+    else
+      echo -e "image is created!... ${CHECK_MARK}\n"
+    fi
+}
+
+build_users_backend_image() {
   echo -e "tests are started ... ${JET}"
 
   if ! ./gradlew clean build; then
@@ -17,23 +32,31 @@ build_image() {
      sleep 1
   fi
 
-  if docker image inspect ${IMAGE} >/dev/null 2>&1; then
-     echo -e "Found old image, removing it ...${FIRED}\n"
-     docker rmi -f ${IMAGE}
-     echo -e "\n"
-  fi
-
-    if ! docker build --build-arg USERNAME=${USERNAME} --tag ${IMAGE} .; then
-       echo -e "fails to create docker image... ${UPSET}" && exit $?
-    else
-       echo -e "image is created!... ${CHECK_MARK}\n"
-    fi
+  inspect_and_build_image ${APP_IMAGE} ${USERNAME} "."
 }
 
-# build users-backend image
-build_image
+build_liquibase_image() {
+    inspect_and_build_image ${MIGRATION_IMAGE} ${USERNAME} "-f Migration.Dockerfile ."
+}
 
-# install helm chart
+# build images
+#build_liquibase_image
+#build_users_backend_image
+
+# install migration helm chart
+#helm upgrade --install \
+#    --atomic \
+#    --timeout 30m \
+#    --wait \
+#    --wait-for-jobs \
+#    --namespace backend-ns \
+#    --set global.applicationNs=application-ns \
+#    --set global.usersDbConfigMap=users-db-config-map \
+#    --set global.usersDbSecret=users-db-secret \
+#    helm-migration-job \
+#    ./helm/users-chart/charts/migration-job
+
+# install users-chart
 helm upgrade --install \
     --atomic \
     --timeout 30m \

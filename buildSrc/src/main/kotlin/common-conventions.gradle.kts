@@ -1,9 +1,8 @@
-import gradle.kotlin.dsl.accessors._d9dcfd1a467b0b6fe90c5571a57aa558.implementation
-import gradle.kotlin.dsl.accessors._d9dcfd1a467b0b6fe90c5571a57aa558.testImplementation
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("org.jetbrains.kotlin.jvm")
+    `java-library`
+    java
 }
 
 repositories {
@@ -21,13 +20,6 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:${properties["junitVersion"]}")
     testImplementation("io.kotlintest:kotlintest-runner-junit5:${properties["kotlinTestVersion"]}")
     testImplementation("io.projectreactor:reactor-test:${properties["projectReactorTestVersion"]}")
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs += "-Xjsr305=strict"
-        jvmTarget = "17"
-    }
 }
 
 tasks.jar {

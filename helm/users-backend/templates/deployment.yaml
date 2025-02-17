@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
     name: {{ .Values.application.name }}
-    namespace: {{ .Values.application.namespace }}
+    namespace: {{ .Values.global.applicationNs }}
     labels:
     {{- include "common.labels" . | indent 8 }}
 spec:
@@ -45,5 +45,18 @@ spec:
                   envFrom:
                       - configMapRef:
                             name: {{ .Values.application.name}}-config-map
+                      - configMapRef:
+                            name: {{ .Values.global.usersDbConfigMap }}
                       - secretRef:
                             name: {{ .Values.application.name}}-secret
+                  env:
+                      - name: DB_USERNAME
+                        valueFrom:
+                            secretKeyRef:
+                                name: {{ .Values.global.usersDbSecret }}
+                                key: username
+                      - name: DB_PASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: {{ .Values.global.usersDbSecret }}
+                                key: password

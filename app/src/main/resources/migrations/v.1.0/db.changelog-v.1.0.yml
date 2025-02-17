@@ -1,0 +1,48 @@
+databaseChangeLog:
+    - changeSet:
+          id: 1
+          author: Evgeny
+          changes:
+              - sqlFile:
+                    path: migrations/v.1.0/01-init-department-table.sql
+          rollbackSqlFile: migrations/v.1.0/01-init-department-table-rollback.sql
+          comment: init departments table
+    - changeSet:
+          id: 2
+          author: Evgeny
+          changes:
+              - sqlFile:
+                    path: migrations/v.1.0/02-init-employees-table.sql
+          rollbackSqlFile: migrations/v.1.0/02-init-employees-table-rollback.sql
+          comment: init employees table
+    - changeSet:
+          id: 3
+          author: Evgeny
+          changes:
+              - sqlFile:
+                    path: migrations/v.1.0/03-cascade-tables.sql
+          rollback:
+            - sqlFile:
+                path: migrations/v.1.0/03-cascade-tables-rollback.sql
+          comment: set cascade delete between two tables
+    - changeSet:
+          id: 4
+          author: Evgeny
+          changes:
+              - sqlFile:
+                    path: migrations/v.1.0/04-add-employees-column.sql
+          comment: add email and birthday columns to the employee table
+    - changeSet:
+          id: 5
+          author: Evgeny
+          changes:
+              - sqlFile:
+                    path: migrations/v.1.0/05-add-ulid-generator.sql
+          comment: add ulid generator function
+    - changeSet:
+          id: 6
+          author: Evgeny
+          changes:
+              - sqlFile:
+                    path: migrations/v.1.0/06-add-departments.sql
+          comment: add departments to table

@@ -1,8 +1,8 @@
 package auth.module.config
 
 import auth.module.Constants
+import exception.handler.module.config.ErrorsMessageResolver
 import exception.handler.module.config.MessageKeys
-import exception.handler.module.config.MessageResolver
 import exception.handler.module.enum.ErrorCode
 import exception.handler.module.exception.CustomException
 import org.springframework.http.HttpStatus
@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono
 import service.config.module.utils.LoggerProvider
 
 @Component
-class AuthenticationEntryPoint(private val messageResolver: MessageResolver): ServerAuthenticationEntryPoint {
+class AuthenticationEntryPoint(private val messageResolver: ErrorsMessageResolver): ServerAuthenticationEntryPoint {
 
     private val logger = LoggerProvider.logger<AuthenticationEntryPoint>()
 
@@ -23,9 +23,8 @@ class AuthenticationEntryPoint(private val messageResolver: MessageResolver): Se
         if (token.isNullOrEmpty()  || !token[0].startsWith(Constants.BEARER)) {
             val locale = exchange?.localeContext?.locale
             throw CustomException(
-                errorMessage = messageResolver.getErrorMessage(
+                errorMessage = messageResolver.getMessage(
                     MessageKeys.KEY_TOKEN_AUTHENTICATION_ERROR,
-                    locale,
                     ex?.localizedMessage ?: "token is invalid"),
                 httpStatus = HttpStatus.UNAUTHORIZED.value(),
                 businessCode = ErrorCode.TOKEN_ERROR_401

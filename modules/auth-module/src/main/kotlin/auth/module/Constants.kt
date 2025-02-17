@@ -10,7 +10,8 @@ object Constants {
 
     val PERMITTED_ENDPOINTS = arrayOf(
         "/actuator/**",
-        "/api/v1/auth/**"
+        "/api/v1/auth/**",
+        "/api/v1/employees/**"
     )
     val RESTRICTED_FROM_USER = arrayOf(
         "/api/v1/admin",

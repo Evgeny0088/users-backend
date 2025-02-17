@@ -10,7 +10,7 @@ plugins {
 kapt {
     keepJavacAnnotationProcessors = true
     javacOptions {
-        option("-Xmaxerrs", 500)
+        option("-Xmaxerrs", 500.toString())
     }
 }
 
@@ -19,7 +19,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("javax.validation:validation-api:${properties["javaxValidation"]}")
+    implementation("jakarta.validation:jakarta.validation-api:${properties["javaxValidation"]}")
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 

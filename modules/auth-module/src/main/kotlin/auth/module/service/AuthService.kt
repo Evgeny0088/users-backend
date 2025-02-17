@@ -8,6 +8,4 @@ class AuthService {
     suspend fun wellKnown(): String {
         return "done"
     }
-
-
 }

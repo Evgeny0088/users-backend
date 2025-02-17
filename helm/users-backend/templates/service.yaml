@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
     name: {{ .Values.application.name }}-service
-    namespace: {{ .Values.application.namespace }}
+    namespace: {{ .Values.global.applicationNs }}
     labels:
     {{- include "common.labels" . | indent 8 }}
     {{- include "monitoring.labels" . | indent 8 }}

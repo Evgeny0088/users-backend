@@ -6,6 +6,18 @@ spring:
             resourceserver:
                 jwt:
                     jwk-set-uri: ${front-url}/${realmsPath}/protocol/openid-connect/certs
+    liquibase:
+        change-log: migrations/v.1.0/db.changelog-v.1.0.yml
+        url: jdbc:postgresql://localhost:5440/users-db
+        user: users
+        password: users-password
+        enabled: false
+    r2dbc:
+        username: users
+        password: users-password
+        url: r2dbc:postgresql://localhost:5440/users-db
+    datasource:
+        driver-class-name: org.postgresql.Driver
 
 front-url: https://front-keycloak.com
 realmsPath: realms/user-management
@@ -37,9 +49,4 @@ logging:
         print: true
         lines-max: 300
     level:
-        org:
-            springframework:
-                security:
-                    web:
-                        server: debug
-        root: debug
+        root: info

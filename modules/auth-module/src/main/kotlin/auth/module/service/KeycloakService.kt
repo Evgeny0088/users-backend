@@ -5,9 +5,9 @@ import auth.module.dto.*
 import auth.module.mapper.TokenMapper
 import auth.module.mapper.UserMapper
 import auth.module.properties.KeycloakProps
+import exception.handler.module.config.ErrorsMessageResolver
 import exception.handler.module.config.MessageKeys.KEY_REGISTRATION_ALREADY_DONE
 import exception.handler.module.config.MessageKeys.KEY_REGISTRATION_ERROR
-import exception.handler.module.config.MessageResolver
 import exception.handler.module.enum.ErrorCode
 import exception.handler.module.exception.CustomException
 import instrumentation.module.config.InstrumentationConfig.registerGauge
@@ -15,6 +15,7 @@ import instrumentation.module.config.InstrumentationConfig.registerTimer
 import instrumentation.module.config.InstrumentationConfig.timeMetric
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Timer
+import jakarta.validation.Valid
 import jakarta.ws.rs.client.Client
 import kotlinx.coroutines.delay
 import org.keycloak.OAuth2Constants
@@ -26,7 +27,10 @@ import org.keycloak.representations.idm.UserRepresentation
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import service.config.module.utils.LoggerProvider.logger
-import java.util.*
+import users.module.dto.DepartmentDto
+import users.module.dto.EmployeeDto
+import users.module.service.UsersService
+import java.time.LocalDateTime
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.random.Random
 
@@ -38,7 +42,8 @@ class KeycloakService(
     private val keycloakProps: KeycloakProps,
     private val userMapper: UserMapper,
     private val tokenMapper: TokenMapper,
-    private val messageResolver: MessageResolver,
+    private val messageResolver: ErrorsMessageResolver,
+    private val usersService: UsersService,
     meterRegistry: MeterRegistry,
 ) {
 
@@ -52,7 +57,7 @@ class KeycloakService(
 
     private val logger = logger<KeycloakService>()
 
-    suspend fun signUp(request: SignUpRequest, locale: Locale): UserResponse {
+    suspend fun signUp(request: SignUpRequest): UserResponse {
         val realmResource = keycloak.realm(keycloakProps.realm)
         val usersResource = realmResource.users()
         val client = realmResource.clients().findByClientId(keycloakProps.clientId)[0]
@@ -74,14 +79,14 @@ class KeycloakService(
             } else if (response.status == 409 && response.statusInfo.reasonPhrase == "Conflict") {
                 logger.error(errorMessage, response.status)
                 throw CustomException(
-                    errorMessage = messageResolver.getErrorMessage(KEY_REGISTRATION_ALREADY_DONE, locale),
+                    errorMessage = messageResolver.getMessage(KEY_REGISTRATION_ALREADY_DONE),
                     httpStatus = 409,
                     businessCode = ErrorCode.USER_ALREADY_REGISTERED
                 )
             } else {
                 logger.error(errorMessage, response.status)
                 throw CustomException(
-                    errorMessage = messageResolver.getErrorMessage(KEY_REGISTRATION_ERROR, locale),
+                    errorMessage = messageResolver.getMessage(KEY_REGISTRATION_ERROR),
                     httpStatus = response.status,
                     businessCode = ErrorCode.USER_NOT_REGISTERED
                 )
@@ -91,7 +96,7 @@ class KeycloakService(
         return userMapper.toDto(savedUser)
     }
 
-    suspend fun login(loginRequest: LoginRequest, locale: Locale): Token {
+    suspend fun login(loginRequest: LoginRequest): TokenResponse {
         val username = loginRequest.username
         val accessToken = loginKeycloakClient(username, loginRequest.password).tokenManager().grantToken()
         logger.info("User (username: {} ) is authenticated.", username)
@@ -105,10 +110,19 @@ class KeycloakService(
         return BooleanRequest(true)
     }
 
-    suspend fun deleteUser(userId: String, locale: Locale): BooleanRequest {
+    suspend fun deleteUser(userId: String): BooleanRequest {
         keycloak.realm(keycloakProps.realm).users().get(userId).remove()
         logger.info("User ( id: {} ) is deleted.", userId)
         return BooleanRequest(true)
+    }
+
+    suspend fun saveTest(@Valid dto: EmployeeDto): EmployeeDto {
+        return usersService.saveEmployee(dto)
+    }
+
+    suspend fun getDepartmentTest(name: String): DepartmentDto {
+        return usersService.getDepartmentByName(name)
+            ?: DepartmentDto("default", LocalDateTime.now())
     }
 
     // demo method only

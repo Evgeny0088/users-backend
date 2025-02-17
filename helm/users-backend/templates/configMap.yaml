@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
     name: {{ .Values.application.name}}-config-map
-    namespace: {{ .Values.application.namespace }}
+    namespace: {{ .Values.global.applicationNs }}
     labels:
     {{- include "common.labels" . | indent 8 }}
 data:
