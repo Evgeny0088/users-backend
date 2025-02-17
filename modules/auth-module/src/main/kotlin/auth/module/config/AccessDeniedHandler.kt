@@ -2,8 +2,6 @@ package auth.module.config
 
 import auth.module.utils.JwtTokenUtils
 import exception.handler.module.config.ErrorsMessageResolver
-import exception.handler.module.config.MessageKeys
-import exception.handler.module.enum.ErrorCode
 import exception.handler.module.exception.CustomException
 import org.springframework.http.HttpStatus
 import org.springframework.http.server.reactive.ServerHttpResponse
@@ -20,15 +18,10 @@ class AccessDeniedHandler(private val messageResolver: ErrorsMessageResolver): S
         val response: ServerHttpResponse = exchange.response
         response.setStatusCode(HttpStatus.FORBIDDEN)
         val url = exchange.request.uri.path
-        val locale = exchange.localeContext.locale
         val token = JwtTokenUtils.retrieveTokenFromWebExchange(exchange)
         val jwt = JwtTokenUtils.decodeToken(token)
         val username = JwtTokenUtils.retrieveUsernameFromTokenClaim(jwt)
         val userRole = JwtTokenUtils.retrieveUserRoleFromTokenClaim(jwt)
-        throw CustomException(
-            errorMessage = messageResolver.getMessage(MessageKeys.KEY_USER_NOT_AUTHORIZED, username, userRole, url),
-            httpStatus = HttpStatus.FORBIDDEN.value(),
-            businessCode = ErrorCode.USER_IS_FORBIDDEN
-        )
+        throw CustomException.defaultAccessDeniedException(messageResolver, username, userRole, url)
     }
 }

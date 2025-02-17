@@ -13,9 +13,8 @@ object ServiceUtils {
             ?: Locale("en")
     }
 
-    fun retrieveLocale(request: ServerHttpRequest): Locale {
-        return request.headers.acceptLanguage
-            .takeIf { it.isNotEmpty() }
+    fun retrieveLocale(request: ServerHttpRequest?): Locale {
+        return request?.headers?.acceptLanguage
             ?.let { Locale(it[0].range) }
             ?: Locale("en")
     }

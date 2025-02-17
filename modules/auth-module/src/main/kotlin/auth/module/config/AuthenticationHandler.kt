@@ -1,10 +1,7 @@
 package auth.module.config
 
 import exception.handler.module.config.ErrorsMessageResolver
-import exception.handler.module.config.MessageKeys
-import exception.handler.module.enum.ErrorCode
 import exception.handler.module.exception.CustomException
-import org.springframework.http.HttpStatus
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.server.WebFilterExchange
 import org.springframework.security.web.server.authentication.ServerAuthenticationFailureHandler
@@ -16,14 +13,10 @@ class AuthenticationHandler(
     private val messageResolver: ErrorsMessageResolver): ServerAuthenticationFailureHandler {
 
     override fun onAuthenticationFailure(
-        webFilterExchange: WebFilterExchange?, exception: AuthenticationException?): Mono<Void> {
-        val locale = webFilterExchange?.exchange?.localeContext?.locale
-        throw CustomException(
-            errorMessage = messageResolver.getMessage(
-                MessageKeys.KEY_TOKEN_AUTHENTICATION_ERROR,
-                exception?.localizedMessage ?: "token is invalid"),
-            httpStatus = HttpStatus.UNAUTHORIZED.value(),
-            businessCode = ErrorCode.TOKEN_ERROR_401
+        webFilterExchange: WebFilterExchange?, ex: AuthenticationException?): Mono<Void> {
+        throw CustomException.defaultUnauthorizedException(
+            messageResolver,
+            args = arrayOf(ex?.localizedMessage ?: "token is invalid")
         )
     }
 }

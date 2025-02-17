@@ -34,7 +34,8 @@ class AuthHandler(
         validationHandler.assignValidator(signUpValidator)
     }
 
-    suspend fun profile(req: ServerRequest): ServerResponse = ok().bodyValueAndAwait(keycloakService.profile())
+    suspend fun profile(req: ServerRequest): ServerResponse =
+        ok().bodyValueAndAwait(keycloakService.profile())
 
     suspend fun testSave(req: ServerRequest): ServerResponse {
         val dto = retrieveRequiredBodyOrFail<EmployeeDto>(req)

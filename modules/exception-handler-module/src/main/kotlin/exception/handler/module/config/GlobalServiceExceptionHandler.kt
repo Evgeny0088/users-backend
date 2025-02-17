@@ -16,6 +16,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.codec.ServerCodecConfigurer
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.BodyInserters
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.reactive.function.server.*
 import reactor.core.publisher.Mono
 import service.config.module.utils.LoggerProvider
@@ -81,6 +82,12 @@ class GlobalServiceExceptionHandler(
                     .status(throwable.response.status)
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(BodyInserters.fromValue(exceptionMapper.mapFromClientErrorException(throwable)))
+            }
+            is WebClientResponseException -> {
+                ServerResponse
+                    .status(throwable.statusCode.value())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(BodyInserters.fromValue(exceptionMapper.mapFromWebClientResponseException(throwable)))
             }
             is CustomException -> {
                 ServerResponse

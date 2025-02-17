@@ -160,6 +160,7 @@ class KeycloakService(
             .clientId(keycloakProps.clientId)
             .clientSecret(keycloakProps.clientSecret)
             .grantType(OAuth2Constants.PASSWORD)
+            .scope("openid")
             .username(username)
             .password(password)
             .resteasyClient(keycloakClient)

@@ -7,6 +7,9 @@ object Constants {
     const val CLIENT_KEYCLOAK_BEAN = "client-keycloak-bean"
     const val CLAIM_CLIENT_ROLES_KEY = "user-management-client-roles"
     const val CLAIM_PREFERRED_USERNAME = "preferred_username"
+    const val KEYCLOAK_WEB_CLIENT = "keycloak-client"
+    const val KEYCLOAK_WEB_CLIENT_CUSTOMIZER = "keycloak-client-customizer"
+
 
     val PERMITTED_ENDPOINTS = arrayOf(
         "/actuator/**",

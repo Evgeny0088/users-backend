@@ -8,6 +8,7 @@ import jakarta.ws.rs.ClientErrorException
 import jakarta.ws.rs.NotFoundException
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
+import org.springframework.web.reactive.function.client.WebClientResponseException
 
 @Component
 class ExceptionMapper {
@@ -58,6 +59,13 @@ class ExceptionMapper {
             businessCode = exception.businessCode?.getBusinessCode(),
             message = exception.errorMessage,
             details = exception.details
+        )
+    }
+
+    fun mapFromWebClientResponseException(exception: WebClientResponseException): ExceptionDto {
+        return ExceptionDto(
+            message = exception.message,
+            httpCode = exception.statusCode.value()
         )
     }
 }

@@ -28,6 +28,7 @@ class RouterController {
             })
             .and(coRouter {
             GET("/api/v1/admin", authHandler::adminPage)
+            GET("/api/v1/user", authHandler::adminPage)
             })
     }
 }

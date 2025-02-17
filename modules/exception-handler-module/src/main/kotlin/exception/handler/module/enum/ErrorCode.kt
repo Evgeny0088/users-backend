@@ -8,6 +8,7 @@ enum class ErrorCode(
     USER_LOGIN_FAILED(401, BusinessCode.ERR_401),
     TOKEN_ERROR_401(401, BusinessCode.ERR_TOKEN_401),
     USER_IS_FORBIDDEN(403, BusinessCode.ERR_403),
+    USER_EMAIL_NOT_VERIFIED(401, BusinessCode.ERR_EMAIL_401),
     INPUT_BAD_REQUEST(400, BusinessCode.ERR_400),
     USER_IS_NOT_DELETED(400, BusinessCode.ERR_410),
     USER_ALREADY_REGISTERED(409, BusinessCode.ERR_409);

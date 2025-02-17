@@ -8,4 +8,5 @@ object MessageKeys {
     const val KEY_VALIDATION_ERROR = "parameters.errors"
     const val KEY_USER_DELETION_ERROR="user.not.deleted"
     const val KEY_REQUEST_BODY="request.body.required"
+    const val KEY_USER_EMAIL_NOT_VERIFIED = "user.email.not.verified"
 }

@@ -11,7 +11,6 @@ import org.springframework.http.server.reactive.ServerHttpResponse
 import org.springframework.web.server.ServerWebExchange
 import org.springframework.web.server.adapter.HttpWebHandlerAdapter
 import org.springframework.web.server.adapter.WebHttpHandlerBuilder
-import service.config.module.utils.ServiceUtils.retrieveLocale
 
 @Configuration
 class HttpExchangeLocaleResolver {
@@ -23,8 +22,7 @@ class HttpExchangeLocaleResolver {
         return object : HttpWebHandlerAdapter((delegate as HttpWebHandlerAdapter)) {
             override fun createExchange(request: ServerHttpRequest, response: ServerHttpResponse): ServerWebExchange {
                 val serverWebExchange = super.createExchange(request, response)
-                val locale = retrieveLocale(request)
-                LocaleContextHolder.setLocaleContext { locale }
+                LocaleContextHolder.setDefaultLocale(serverWebExchange.localeContext.locale)
                 return serverWebExchange
             }
         }

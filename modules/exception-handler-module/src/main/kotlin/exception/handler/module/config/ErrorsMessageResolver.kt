@@ -14,8 +14,9 @@ class ErrorsMessageResolver (
 ) {
 
     fun getMessage(messageKey: String, vararg args: String? = arrayOfNulls(1)): String {
+        val locale = LocaleContextHolder.getLocale()
         return messageResolver.getMessage(
-            messageKey, args, LocaleContextHolder.getLocale() ?: Locale.getDefault()
+            messageKey, args, locale ?: Locale.getDefault()
         )
     }
 }
