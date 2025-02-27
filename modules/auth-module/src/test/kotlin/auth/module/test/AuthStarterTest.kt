@@ -15,13 +15,13 @@ class AuthStarterTest {
 
     @Test
     fun `user mapper test`() {
-        val signUpRequest = SignUpRequest().apply {
-            this.username = "test"
-            this.password = "password"
-            this.firstName = "user-1"
-            this.lastName = "user-1"
-            this.email = "user@test.com"
-        }
+        val signUpRequest = SignUpRequest(
+            username = "test",
+            password = "password",
+            firstName = "user-1",
+            lastName = "user-1",
+            email = "user@test.com"
+        )
 
         val userRepresentation = userMapper.toRepresentation(signUpRequest)
 

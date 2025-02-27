@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test
 class AppTest {
 
     @Test fun testGetMessage() {
+        if (false) {
+
+        }
         assert(true)
     }
 }

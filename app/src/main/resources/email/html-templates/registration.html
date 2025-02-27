@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <title th:text="#{title.email}">Template for registration</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<div>
+    <p>
+        <span><b th:text="|#{title.email(${EmailDto.username})},|"></b><br></span>
+        <span th:text="|#{registration.text.first},|"></span>
+        <span th:text="|#{registration.text.second}:|"></span><br>
+        <a th:href="@{EmailDto.link}" th:text="#{registration.text.third}"></a>
+    </p>
+</div>
+<p>
+    <img src="../../static/penguin.png" th:src="|cid:${logo}|" />
+</p>
+<p>
+    Regards, <br />
+    <em>The Keycloak Team</em>
+</p>
+</body>
+</html>

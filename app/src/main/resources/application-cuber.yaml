@@ -1,4 +1,14 @@
 spring:
+    mail:
+        host: ${EMAIL_HOST}
+        port: ${EMAIL_PORT}
+        username: ${EMAIL}
+        password: ${EMAIL_PASS}
+        sendTo: ${EMAIL_SEND_TO}
+        protocol: smtps
+        auth: true
+        ssl-enable: true
+        smtp-debug: false
     application:
         name: users-backend
     security:

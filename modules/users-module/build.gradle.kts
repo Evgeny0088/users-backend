@@ -3,7 +3,6 @@ plugins {
     id("library-conventions")
     id("spring-conventions")
     id("liquibase-conventions")
-    id("org.jetbrains.kotlin.plugin.jpa")
 }
 
 group="users.module"

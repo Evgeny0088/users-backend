@@ -5,12 +5,12 @@ import exception.handler.module.validator.ValidationHandler
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.MessageSource
 import org.springframework.context.annotation.*
-import org.springframework.context.support.ResourceBundleMessageSource
 import org.springframework.validation.Validator
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean
 import service.config.module.Constants.BEAN_BUSINESS_ERRORS
 import service.config.module.Constants.BEAN_VALIDATION_ERRORS
 import service.config.module.ServiceConfigStarter
+import service.config.module.utils.ServiceUtils.messageSourceCreator
 
 @ComponentScan
 @Configuration(proxyBeanMethods = false)
@@ -41,12 +41,5 @@ class ExceptionHandlerStarter {
         validator: Validator,
         customMessageResolver: ErrorsMessageResolver): ValidationHandler<Validator> {
         return ValidationHandler(validator, customMessageResolver)
-    }
-
-    private fun messageSourceCreator(bundleName: String): MessageSource {
-        val messageSource = ResourceBundleMessageSource()
-        messageSource.setBasename(bundleName)
-        messageSource.setDefaultEncoding("UTF-8")
-        return messageSource
     }
 }

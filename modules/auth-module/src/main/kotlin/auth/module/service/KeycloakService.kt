@@ -5,6 +5,8 @@ import auth.module.dto.*
 import auth.module.mapper.TokenMapper
 import auth.module.mapper.UserMapper
 import auth.module.properties.KeycloakProps
+import email.service.module.dto.EmailDto
+import email.service.module.service.EmailService
 import exception.handler.module.config.ErrorsMessageResolver
 import exception.handler.module.config.MessageKeys.KEY_REGISTRATION_ALREADY_DONE
 import exception.handler.module.config.MessageKeys.KEY_REGISTRATION_ERROR
@@ -30,6 +32,7 @@ import service.config.module.utils.LoggerProvider.logger
 import users.module.dto.DepartmentDto
 import users.module.dto.EmployeeDto
 import users.module.service.UsersService
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.random.Random
@@ -44,6 +47,7 @@ class KeycloakService(
     private val tokenMapper: TokenMapper,
     private val messageResolver: ErrorsMessageResolver,
     private val usersService: UsersService,
+    private val mailService: EmailService,
     meterRegistry: MeterRegistry,
 ) {
 
@@ -133,6 +137,12 @@ class KeycloakService(
             logger.info("Endpoint /api/v1/profile is called! ...")
             gaugeValue.set(random)
             delay(random.toLong())
+            mailService.sendEmail(EmailDto(
+                "user-1",
+                "test@email.com",
+                "https://localhost:8080",
+                LocalDate.now())
+            )
             if (random % 3 == 0) {
                 throw CustomException("Profile error", 400, ErrorCode.INPUT_BAD_REQUEST)
             }

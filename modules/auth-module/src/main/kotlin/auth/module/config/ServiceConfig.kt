@@ -4,7 +4,7 @@ import auth.module.Constants.CLIENT_KEYCLOAK_BEAN
 import auth.module.Constants.KEYCLOAK_WEB_CLIENT
 import auth.module.Constants.KEYCLOAK_WEB_CLIENT_CUSTOMIZER
 import auth.module.properties.KeycloakProps
-import auth.module.utils.ServiceUtils
+import auth.module.utils.ServiceUtils.setupSSLContext
 import exception.handler.module.config.ErrorsMessageResolver
 import exception.handler.module.config.MessageKeys
 import exception.handler.module.exception.CustomException
@@ -54,7 +54,7 @@ class ServiceConfig {
             .newBuilder()
             .connectTimeout(60, TimeUnit.SECONDS)
             .readTimeout(60, TimeUnit.SECONDS)
-            .sslContext(ServiceUtils.setupSSLContext(keycloakProperties))
+            .sslContext(setupSSLContext(keycloakProperties))
             .build()
     }
 

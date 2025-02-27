@@ -27,4 +27,9 @@ class Employee (
     var salary: Int? = 0,
 
     var department: Department
-) : EntityClass()
+) : EntityClass() {
+
+    override fun toString(): String {
+        return super.toString()
+    }
+}

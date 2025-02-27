@@ -3,6 +3,7 @@ package auth.module.config
 import auth.module.Constants.KEYCLOAK_WEB_CLIENT
 import auth.module.Constants.PERMITTED_ENDPOINTS
 import auth.module.Constants.RESTRICTED_FROM_USER
+import auth.module.properties.KeycloakProps
 import exception.handler.module.config.ErrorsMessageResolver
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
@@ -31,7 +32,8 @@ class SecurityConfig {
         authenticationHandler: AuthenticationHandler,
         accessDeniedHandler: AccessDeniedHandler,
         @Qualifier(KEYCLOAK_WEB_CLIENT)webClient: WebClient,
-        messageResolver: ErrorsMessageResolver
+        messageResolver: ErrorsMessageResolver,
+        keycloakProps: KeycloakProps
     ): SecurityWebFilterChain {
         return http
             .csrf { csrf -> csrf.disable() }
@@ -43,7 +45,7 @@ class SecurityConfig {
                     .authenticated()
             }
             .addFilterAfter(
-                UserSessionVerificationFilter(webClient, messageResolver), SecurityWebFiltersOrder.AUTHORIZATION
+                UserSessionVerificationFilter(webClient, keycloakProps, messageResolver), SecurityWebFiltersOrder.AUTHORIZATION
             )
             .oauth2ResourceServer { auth ->
                 auth
