@@ -1,179 +1,86 @@
 package auth.module.service
 
-import auth.module.Constants.CLIENT_KEYCLOAK_BEAN
-import auth.module.dto.*
-import auth.module.mapper.TokenMapper
-import auth.module.mapper.UserMapper
+import auth.module.Constants
+import auth.module.dto.LogoutRequest
+import auth.module.dto.RefreshRequest
 import auth.module.properties.KeycloakProps
-import email.service.module.dto.EmailDto
-import email.service.module.service.EmailService
-import exception.handler.module.config.ErrorsMessageResolver
-import exception.handler.module.config.MessageKeys.KEY_REGISTRATION_ALREADY_DONE
-import exception.handler.module.config.MessageKeys.KEY_REGISTRATION_ERROR
-import exception.handler.module.enum.ErrorCode
-import exception.handler.module.exception.CustomException
-import instrumentation.module.config.InstrumentationConfig.registerGauge
-import instrumentation.module.config.InstrumentationConfig.registerTimer
-import instrumentation.module.config.InstrumentationConfig.timeMetric
-import io.micrometer.core.instrument.MeterRegistry
-import io.micrometer.core.instrument.Timer
-import jakarta.validation.Valid
-import jakarta.ws.rs.client.Client
-import kotlinx.coroutines.delay
-import org.keycloak.OAuth2Constants
+import auth.module.utils.ServiceUtils
+import com.nimbusds.oauth2.sdk.GrantType
+import kotlinx.coroutines.reactor.awaitSingle
 import org.keycloak.admin.client.Keycloak
 import org.keycloak.admin.client.KeycloakBuilder
-import org.keycloak.admin.client.resource.UserResource
-import org.keycloak.representations.idm.RoleRepresentation
-import org.keycloak.representations.idm.UserRepresentation
+import org.keycloak.admin.client.resource.RealmResource
+import org.keycloak.representations.AccessTokenResponse
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
-import service.config.module.utils.LoggerProvider.logger
-import users.module.dto.DepartmentDto
-import users.module.dto.EmployeeDto
-import users.module.service.UsersService
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.util.concurrent.atomic.AtomicInteger
-import kotlin.random.Random
+import org.springframework.util.LinkedMultiValueMap
+import org.springframework.util.MultiValueMap
+import org.springframework.web.reactive.function.BodyInserters
+import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.bodyToMono
+import service.config.module.utils.LoggerProvider
 
 @Service
 class KeycloakService(
-    @Qualifier(CLIENT_KEYCLOAK_BEAN)
-    private val keycloak: Keycloak,
-    private val keycloakClient: Client,
-    private val keycloakProps: KeycloakProps,
-    private val userMapper: UserMapper,
-    private val tokenMapper: TokenMapper,
-    private val messageResolver: ErrorsMessageResolver,
-    private val usersService: UsersService,
-    private val mailService: EmailService,
-    meterRegistry: MeterRegistry,
+    @Qualifier(Constants.CLIENT_KEYCLOAK_BEAN)
+    private val keycloakClient: Keycloak,
+    @Qualifier(Constants.CLIENT_KEYCLOAK_USER_BUILDER)
+    private val keycloakUserBuilder: KeycloakBuilder,
+    @Qualifier(Constants.KEYCLOAK_WEB_CLIENT)
+    private val keycloakWebClient: WebClient,
+    private val keycloakProps: KeycloakProps
 ) {
 
-    private var gaugeValue: AtomicInteger = AtomicInteger(0)
-    private lateinit var timed: Timer
+    private val logger = LoggerProvider.logger<AuthService>()
 
-    init {
-        registerGauge("gauge.random.value", gaugeValue, meterRegistry)
-        timed = registerTimer("profile.timed", "measure time of profile request", meterRegistry)
+    fun getRealmResource(): RealmResource {
+        return keycloakClient.realm(keycloakProps.realm)
     }
 
-    private val logger = logger<KeycloakService>()
+    fun grandToken(username: String, password: String): AccessTokenResponse {
+        return loginKeycloakClient(username, password).tokenManager().grantToken()
+    }
 
-    suspend fun signUp(request: SignUpRequest): UserResponse {
-        val realmResource = keycloak.realm(keycloakProps.realm)
-        val usersResource = realmResource.users()
-        val client = realmResource.clients().findByClientId(keycloakProps.clientId)[0]
-        val roles = realmResource.clients().get(client.id).roles().list()
-        val role = assignRole(request.role, roles)
-        val user = userMapper.toRepresentation(request)
-
-        usersResource.get("").userSessions
-
-        var savedUser = UserRepresentation()
-
-        usersResource.create(user).use { response ->
-            val errorMessage = "User cannot be registered: {}"
-            if (response.status == 201) {
-                savedUser = usersResource.searchByEmail(request.email, true)[0]
-                val savedResource: UserResource = usersResource.get(savedUser.id)
-                savedResource.roles().clientLevel(client.id).add(listOf(role))
-                logger.info("User ( id: {}, username: {} ) is registered", savedUser.id, savedUser.username)
-            } else if (response.status == 409 && response.statusInfo.reasonPhrase == "Conflict") {
-                logger.error(errorMessage, response.status)
-                throw CustomException(
-                    errorMessage = messageResolver.getMessage(KEY_REGISTRATION_ALREADY_DONE),
-                    httpStatus = 409,
-                    businessCode = ErrorCode.USER_ALREADY_REGISTERED
-                )
-            } else {
-                logger.error(errorMessage, response.status)
-                throw CustomException(
-                    errorMessage = messageResolver.getMessage(KEY_REGISTRATION_ERROR),
-                    httpStatus = response.status,
-                    businessCode = ErrorCode.USER_NOT_REGISTERED
-                )
+    suspend fun getRefreshedToken(refreshRequest: RefreshRequest): AccessTokenResponse {
+        return keycloakWebClient
+            .method(HttpMethod.POST)
+            .uri("${keycloakProps.serverUrl}/realms/${keycloakProps.realm}/protocol/openid-connect/token")
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+            .body(BodyInserters.fromFormData(buildMultiValueMap(keycloakProps, refreshRequest)))
+            .exchangeToMono {resp-> resp.bodyToMono<AccessTokenResponse>() }
+            .retryWhen(ServiceUtils.retryPolicyWebClient())
+            .doOnNext {
+                logger.info("refresh token received: $it")
+                logger.info("User (username: {} ) is re-authenticated.", refreshRequest.username)
             }
-        }
-
-        return userMapper.toDto(savedUser)
+            .awaitSingle()
     }
 
-    suspend fun login(loginRequest: LoginRequest): TokenResponse {
-        val username = loginRequest.username
-        val accessToken = loginKeycloakClient(username, loginRequest.password).tokenManager().grantToken()
-        logger.info("User (username: {} ) is authenticated.", username)
-        return tokenMapper.toDto(accessToken)
+    fun logoutUser(logoutRequest: LogoutRequest) {
+        keycloakClient.realm(keycloakProps.realm).users().get(logoutRequest.userId).logout()
     }
 
-    suspend fun logout(logoutRequest: LogoutRequest): BooleanRequest {
-        val username = logoutRequest.username
-        keycloak.realm(keycloakProps.realm).users().get(logoutRequest.userId).logout()
-        logger.info("User ( username {} ) is logged out.", username)
-        return BooleanRequest(true)
-    }
-
-    suspend fun deleteUser(userId: String): BooleanRequest {
-        keycloak.realm(keycloakProps.realm).users().get(userId).remove()
-        logger.info("User ( id: {} ) is deleted.", userId)
-        return BooleanRequest(true)
-    }
-
-    suspend fun saveTest(@Valid dto: EmployeeDto): EmployeeDto {
-        return usersService.saveEmployee(dto)
-    }
-
-    suspend fun getDepartmentTest(name: String): DepartmentDto {
-        return usersService.getDepartmentByName(name)
-            ?: DepartmentDto("default", LocalDateTime.now())
-    }
-
-    // demo method only
-    suspend fun profile(): String {
-        var result = ""
-        timeMetric(timed) {
-            val random = Random.nextInt(0, 5000)
-            logger.info("Endpoint /api/v1/profile is called! ...")
-            gaugeValue.set(random)
-            delay(random.toLong())
-            mailService.sendEmail(EmailDto(
-                "user-1",
-                "test@email.com",
-                "https://localhost:8080",
-                LocalDate.now())
-            )
-            if (random % 3 == 0) {
-                throw CustomException("Profile error", 400, ErrorCode.INPUT_BAD_REQUEST)
-            }
-            result=  "done"
-        }
-        return result
-    }
-
-    private fun assignRole(role: String?, roles: List<RoleRepresentation>): RoleRepresentation {
-        return role?.let { retrieveRole(it, roles) ?: defaultRole(roles) } ?: defaultRole(roles)
-    }
-
-    private fun retrieveRole(inputRole: String, roles: List<RoleRepresentation>): RoleRepresentation? {
-        return roles.find { r-> r.name == inputRole }
-    }
-
-    private fun defaultRole(roles: List<RoleRepresentation>): RoleRepresentation {
-        return roles.find { r-> r.name == "ROLE_USER" }!!
+    fun deleteUser(userId: String) {
+        keycloakClient.realm(keycloakProps.realm).users().get(userId).remove()
     }
 
     private fun loginKeycloakClient(username: String, password: String): Keycloak {
-        return KeycloakBuilder.builder()
-            .serverUrl(keycloakProps.serverUrl)
-            .realm(keycloakProps.realm)
-            .clientId(keycloakProps.clientId)
-            .clientSecret(keycloakProps.clientSecret)
-            .grantType(OAuth2Constants.PASSWORD)
+        return keycloakUserBuilder
             .scope("openid")
             .username(username)
             .password(password)
-            .resteasyClient(keycloakClient)
             .build()
+    }
+
+    private fun buildMultiValueMap(keycloakProps: KeycloakProps, request: RefreshRequest): MultiValueMap<String, String> {
+        val map = LinkedMultiValueMap<String, String>()
+        map.add("client_id", keycloakProps.clientId)
+        map.add("client_secret", keycloakProps.clientSecret)
+        map.add("grant_type", GrantType.REFRESH_TOKEN.value)
+        map.add("refresh_token", request.refreshToken)
+        return map
     }
 }

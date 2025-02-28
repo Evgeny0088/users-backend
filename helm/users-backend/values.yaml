@@ -2,7 +2,7 @@ global:
     applicationNs: application-ns
     usersDbConfigMap: users-db-config-map
     usersDbSecret: users-db-secret
-    migrationEnabled: true
+    migrationEnabled: false
 
 application:
     profile: cuber
@@ -19,6 +19,13 @@ application:
     logSecurityLevel: info
     sslPath: "./cert/"
     javaOpts: "-XX:MaxRAMPercentage=75.0"
+
+email:
+    host: "https://any-server.com"
+    port: 555
+    username: "username"
+    password: "password"
+    emailSendTo: "test@email.com"
 
 keycloak:
     serviceName: keycloak-service

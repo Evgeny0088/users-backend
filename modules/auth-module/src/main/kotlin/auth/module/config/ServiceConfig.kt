@@ -1,6 +1,7 @@
 package auth.module.config
 
 import auth.module.Constants.CLIENT_KEYCLOAK_BEAN
+import auth.module.Constants.CLIENT_KEYCLOAK_USER_BUILDER
 import auth.module.Constants.KEYCLOAK_WEB_CLIENT
 import auth.module.Constants.KEYCLOAK_WEB_CLIENT_CUSTOMIZER
 import auth.module.properties.KeycloakProps
@@ -59,15 +60,17 @@ class ServiceConfig {
     }
 
     @Bean(CLIENT_KEYCLOAK_BEAN)
-    fun keycloak(keycloakProperties: KeycloakProps, keyCloakClient: Client): Keycloak {
-        return KeycloakBuilder.builder()
-            .serverUrl(keycloakProperties.serverUrl)
-            .realm(keycloakProperties.realm)
+    fun keycloakClient(keycloakProperties: KeycloakProps, keyCloakClient: Client): Keycloak {
+        return buildKeycloakClient(keycloakProperties, keyCloakClient)
             .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
-            .clientId(keycloakProperties.clientId)
-            .clientSecret(keycloakProperties.clientSecret)
-            .resteasyClient(keyCloakClient)
             .build()
+    }
+
+    @Bean(CLIENT_KEYCLOAK_USER_BUILDER)
+    fun keycloakUserBuilder(keycloakProps: KeycloakProps, keycloakClient: Client): KeycloakBuilder {
+        return buildKeycloakClient(keycloakProps, keycloakClient)
+            .grantType(OAuth2Constants.PASSWORD)
+            .scope("openid")
     }
 
     @Bean
@@ -119,5 +122,14 @@ class ServiceConfig {
         return builder
             .baseUrl(keycloakProperties.serverUrl)
             .build()
+    }
+
+    private fun buildKeycloakClient(keycloakProperties: KeycloakProps, keyCloakClient: Client): KeycloakBuilder {
+        return KeycloakBuilder.builder()
+            .serverUrl(keycloakProperties.serverUrl)
+            .realm(keycloakProperties.realm)
+            .clientId(keycloakProperties.clientId)
+            .clientSecret(keycloakProperties.clientSecret)
+            .resteasyClient(keyCloakClient)
     }
 }

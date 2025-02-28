@@ -16,6 +16,7 @@ class RouterController {
                 /*  for test only*/ GET("/profile", authHandler::profile)
                 POST("/sign-up", authHandler::signUp)
                 POST("/login", authHandler::login)
+                POST("/refresh", authHandler::refresh)
                 POST("/logout", authHandler::logout)
                 DELETE("/{user-id}", authHandler::deleteUser)
             }

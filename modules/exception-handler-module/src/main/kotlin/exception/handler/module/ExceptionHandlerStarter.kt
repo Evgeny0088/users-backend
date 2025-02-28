@@ -40,6 +40,6 @@ class ExceptionHandlerStarter {
     fun validationHandler(
         validator: Validator,
         customMessageResolver: ErrorsMessageResolver): ValidationHandler<Validator> {
-        return ValidationHandler(validator, customMessageResolver)
+        return ValidationHandler(validator = validator, customMessageResolver)
     }
 }

@@ -20,6 +20,10 @@ class ValidationHandler<V: Validator>(
         validators.add(validator)
     }
 
+    fun assignValidator(vararg validator: V) {
+        validators.addAll(validator)
+    }
+
     private fun onValidationErrors(
         errors: Errors,
         invalidBody: Any? = null,
@@ -39,10 +43,6 @@ class ValidationHandler<V: Validator>(
             throw onValidationErrors(errors)
         }
         return target
-    }
-
-    fun assignValidator(validator: V) {
-        validators.add(validator)
     }
 
     private fun mapErrors(errors: Errors): Map<String, String> {

@@ -2,10 +2,10 @@ package auth.module.controller
 
 import auth.module.dto.LoginRequest
 import auth.module.dto.LogoutRequest
+import auth.module.dto.RefreshRequest
 import auth.module.dto.SignUpRequest
+import auth.module.service.AuthServiceMock
 import auth.module.service.AuthService
-import auth.module.service.KeycloakService
-import auth.module.validation.SignUpValidator
 import exception.handler.module.config.ErrorsMessageResolver
 import exception.handler.module.config.MessageKeys.KEY_REQUEST_BODY
 import exception.handler.module.exception.CustomException
@@ -22,16 +22,16 @@ import users.module.dto.EmployeeDto
 
 @Service
 class AuthHandler(
-    private val keycloakService: KeycloakService,
-    private val authService: AuthService,
+    private val keycloakService: AuthService,
+    private val authService: AuthServiceMock,
     private val messageResolver: ErrorsMessageResolver,
     private val validationHandler: ValidationHandler<Validator>,
-    private val signUpValidator: SignUpValidator
+    private val validators: List<Validator>
 ) {
 
     @PostConstruct
     fun init() {
-        validationHandler.assignValidator(signUpValidator)
+        validationHandler.assignValidator(*validators.toTypedArray())
     }
 
     suspend fun profile(req: ServerRequest): ServerResponse =
@@ -62,6 +62,12 @@ class AuthHandler(
         val body = retrieveRequiredBodyOrFail<LoginRequest>(loginRequest)
         validationHandler.handleValidation(body, loginRequest)
         return ok().bodyValueAndAwait(keycloakService.login(body))
+    }
+
+    suspend fun refresh(refreshRequest: ServerRequest): ServerResponse {
+        val body = retrieveRequiredBodyOrFail<RefreshRequest>(refreshRequest)
+        validationHandler.handleValidation(body, refreshRequest)
+        return ok().bodyValueAndAwait(keycloakService.refreshToken(body))
     }
 
     suspend fun logout(logoutRequest: ServerRequest): ServerResponse {

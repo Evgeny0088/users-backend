@@ -5,6 +5,7 @@ object Constants {
     const val BEARER = "Bearer"
     const val HEADER_AUTHORIZATION = "Authorization"
     const val CLIENT_KEYCLOAK_BEAN = "client-keycloak-bean"
+    const val CLIENT_KEYCLOAK_USER_BUILDER = "client-user-builder"
     const val CLAIM_CLIENT_ROLES_KEY = "user-management-client-roles"
     const val CLAIM_PREFERRED_USERNAME = "preferred_username"
     const val KEYCLOAK_WEB_CLIENT = "keycloak-client"

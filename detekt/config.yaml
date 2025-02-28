@@ -88,9 +88,6 @@ empty-blocks:
 formatting:
     active: true
     autoCorrect: true
-    FinalNewline:
-        active: true
-        autoCorrect: true
     NoEmptyClassBody:
         active: true
         autoCorrect: true

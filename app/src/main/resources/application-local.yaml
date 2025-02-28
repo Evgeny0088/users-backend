@@ -1,4 +1,6 @@
 spring:
+    thymeleaf:
+        check-template: false
     mail:
         host: ${EMAIL_HOST}
         port: ${EMAIL_PORT}

@@ -59,13 +59,18 @@ build_liquibase_image() {
 # install users-chart
 helm upgrade --install \
     --atomic \
-    --timeout 30m \
+    --timeout 20m \
     --wait \
     --wait-for-jobs \
     --namespace backend-ns \
     --set keycloak.realm=$REALM \
     --set keycloak.clientId=$CLIENT_ID \
     --set keycloak.clientSecret=$CLIENT_SECRET \
+    --set email.host=$EMAIL_HOST \
+    --set email.port=$EMAIL_PORT \
+    --set email.username=$EMAIL \
+    --set email.password=$EMAIL_PASS \
+    --set email.emailSendTo=$EMAIL_SEND_TO \
     helm-users-backend \
     ./helm/users-backend
 

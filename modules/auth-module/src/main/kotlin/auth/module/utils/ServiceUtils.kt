@@ -1,11 +1,16 @@
 package auth.module.utils
 
 import auth.module.properties.KeycloakProps
+import org.springframework.web.reactive.function.client.WebClientResponseException
+import reactor.util.retry.Retry
+import reactor.util.retry.RetryBackoffSpec
+import reactor.util.retry.RetrySpec
 import java.io.InputStream
 import java.nio.file.Files
 import java.security.KeyStore
 import java.security.cert.Certificate
 import java.security.cert.CertificateFactory
+import java.time.Duration
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManagerFactory
 import kotlin.io.path.Path
@@ -34,5 +39,11 @@ object ServiceUtils {
                 context.init(null, trustFactory.trustManagers, null)
                 return context
             }
+    }
+
+    fun retryPolicyWebClient(): RetryBackoffSpec {
+        return Retry.backoff(2, Duration.ofSeconds(1)).jitter(0.75)
+            .filter { ex-> ex is WebClientResponseException }
+            .onRetryExhaustedThrow { _, ex -> throw ex.failure() }
     }
 }
