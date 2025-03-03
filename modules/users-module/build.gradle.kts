@@ -3,6 +3,7 @@ plugins {
     id("library-conventions")
     id("spring-conventions")
     id("liquibase-conventions")
+    id("kapt-conventions")
 }
 
 group="users.module"
