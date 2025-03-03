@@ -22,8 +22,8 @@ import users.module.dto.EmployeeDto
 
 @Service
 class AuthHandler(
-    private val keycloakService: AuthService,
-    private val authService: AuthServiceMock,
+    private val authService: AuthService,
+    private val authServiceMock: AuthServiceMock,
     private val messageResolver: ErrorsMessageResolver,
     private val validationHandler: ValidationHandler<Validator>,
     private val validators: List<Validator>
@@ -35,50 +35,55 @@ class AuthHandler(
     }
 
     suspend fun profile(req: ServerRequest): ServerResponse =
-        ok().bodyValueAndAwait(keycloakService.profile())
+        ok().bodyValueAndAwait(authService.profile())
 
     suspend fun testSave(req: ServerRequest): ServerResponse {
         val dto = retrieveRequiredBodyOrFail<EmployeeDto>(req)
         validationHandler.handleValidation(dto, req)
-        return ok().bodyValueAndAwait(keycloakService.saveTest(dto))
+        return ok().bodyValueAndAwait(authService.saveTest(dto))
+    }
+
+    suspend fun swaggerProfile(req: ServerRequest): ServerResponse {
+        val dto = retrieveRequiredBodyOrFail<EmployeeDto>(req)
+        return ok().bodyValueAndAwait(authServiceMock.testProfile(dto))
     }
 
     suspend fun getDepartment(req: ServerRequest): ServerResponse {
         return ok().bodyValueAndAwait(
-            keycloakService.getDepartmentTest(req.pathVariable("dep-name"))
+            authService.getDepartmentTest(req.pathVariable("dep-name"))
         )
     }
 
     suspend fun adminPage(req: ServerRequest): ServerResponse =
-        ok().bodyValueAndAwait(authService.wellKnown())
+        ok().bodyValueAndAwait(authServiceMock.wellKnown())
 
     suspend fun signUp(signUpRequest: ServerRequest): ServerResponse {
         val body = retrieveRequiredBodyOrFail<SignUpRequest>(signUpRequest)
         validationHandler.handleValidation(body, signUpRequest)
-        return ok().bodyValueAndAwait(keycloakService.signUp(body))
+        return ok().bodyValueAndAwait(authService.signUp(body))
     }
 
     suspend fun login(loginRequest: ServerRequest): ServerResponse {
         val body = retrieveRequiredBodyOrFail<LoginRequest>(loginRequest)
         validationHandler.handleValidation(body, loginRequest)
-        return ok().bodyValueAndAwait(keycloakService.login(body))
+        return ok().bodyValueAndAwait(authService.login(body))
     }
 
     suspend fun refresh(refreshRequest: ServerRequest): ServerResponse {
         val body = retrieveRequiredBodyOrFail<RefreshRequest>(refreshRequest)
         validationHandler.handleValidation(body, refreshRequest)
-        return ok().bodyValueAndAwait(keycloakService.refreshToken(body))
+        return ok().bodyValueAndAwait(authService.refreshToken(body))
     }
 
     suspend fun logout(logoutRequest: ServerRequest): ServerResponse {
         val body = retrieveRequiredBodyOrFail<LogoutRequest>(logoutRequest)
         validationHandler.handleValidation(body, logoutRequest)
-        return ok().bodyValueAndAwait(keycloakService.logout(body))
+        return ok().bodyValueAndAwait(authService.logout(body))
     }
 
     suspend fun deleteUser(request: ServerRequest): ServerResponse {
         return ok().bodyValueAndAwait(
-            keycloakService.deleteUser(request.pathVariable("user-id"))
+            authService.deleteUser(request.pathVariable("user-id"))
         )
     }
 

@@ -13,6 +13,7 @@ object Constants {
 
 
     val PERMITTED_ENDPOINTS = arrayOf(
+        "/swagger-docs/v3/api-docs*/**",
         "/actuator/**",
         "/api/v1/auth/**",
         "/api/v1/employees/**"

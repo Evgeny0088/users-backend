@@ -26,10 +26,6 @@ class Employee (
     @Column("salary")
     var salary: Int? = 0,
 
-    var department: Department
-) : EntityClass() {
-
-    override fun toString(): String {
-        return super.toString()
-    }
-}
+    @Column("department_id")
+    var departmentId: String
+) : EntityClass()

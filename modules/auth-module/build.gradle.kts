@@ -2,6 +2,7 @@
 plugins {
     id("library-conventions")
     id("spring-conventions")
+    id("swagger-conventions")
 }
 
 group="auth.module"

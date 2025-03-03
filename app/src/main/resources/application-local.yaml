@@ -1,4 +1,6 @@
 spring:
+    config:
+        import: file:local/.env[.properties]
     thymeleaf:
         check-template: false
     mail:
@@ -55,6 +57,13 @@ management:
         web:
             path-mapping:
                 prometheus: "metrics"
+
+# open api setup
+springdoc:
+    api-docs:
+        enabled: true
+        path: /swagger-docs/v3/api-docs
+    swagger-ui.path: ${springdoc.api-docs.path}/swagger-ui.html
 
 logging:
     stack-trace:
