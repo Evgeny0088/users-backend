@@ -2,7 +2,6 @@
 plugins {
     id("org.jetbrains.kotlin.jvm")
     id("detekt-conventions")
-    `java-library`
     java
 }
 
@@ -21,11 +20,6 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:${properties["junitVersion"]}")
     testImplementation("io.kotlintest:kotlintest-runner-junit5:${properties["kotlinTestVersion"]}")
     testImplementation("io.projectreactor:reactor-test:${properties["projectReactorTestVersion"]}")
-}
-
-tasks.jar {
-    enabled = true
-    archiveClassifier.set("")
 }
 
 tasks.compileJava {
