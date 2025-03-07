@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.MessageSource
 import org.springframework.context.i18n.LocaleContextHolder
 import org.springframework.stereotype.Component
-import service.config.module.Constants.BEAN_BUSINESS_ERRORS
 import service.config.module.Constants.BEAN_VALIDATION_ERRORS
 import java.util.*
 

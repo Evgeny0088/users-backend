@@ -20,7 +20,3 @@ dependencies {
     implementation(project(":modules:exception-handler-module"))
 
 }
-
-tasks.bootJar {
-    enabled = false
-}

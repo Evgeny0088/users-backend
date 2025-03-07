@@ -41,7 +41,7 @@ build_liquibase_image() {
 
 # build images
 #build_liquibase_image
-#build_users_backend_image
+build_users_backend_image
 
 # install migration helm chart
 #helm upgrade --install \

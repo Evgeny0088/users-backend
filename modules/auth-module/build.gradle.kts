@@ -23,9 +23,4 @@ dependencies {
 
     kapt("org.mapstruct:mapstruct-processor:${properties["mapstructVersion"]}")
     implementation("org.mapstruct:mapstruct:${properties["mapstructVersion"]}")
-
-}
-
-tasks.bootJar {
-    enabled = false
 }

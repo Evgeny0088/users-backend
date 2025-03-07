@@ -8,7 +8,3 @@ plugins {
 dependencies {
     implementation(project(":modules:service-config-module"))
 }
-
-tasks.bootJar {
-    enabled = false
-}
