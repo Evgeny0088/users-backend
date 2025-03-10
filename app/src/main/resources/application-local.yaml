@@ -3,6 +3,8 @@ spring:
         import: file:local/.env[.properties]
     thymeleaf:
         check-template: false
+    reactor:
+        context-propagation: auto
     mail:
         host: ${EMAIL_HOST}
         port: ${EMAIL_PORT}
