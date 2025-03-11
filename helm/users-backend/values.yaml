@@ -2,7 +2,7 @@ global:
     applicationNs: application-ns
     usersDbConfigMap: users-db-config-map
     usersDbSecret: users-db-secret
-    migrationEnabled: false
+    migrationEnabled: true
 
 application:
     profile: cuber

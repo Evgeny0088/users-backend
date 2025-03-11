@@ -40,7 +40,7 @@ class EmailService(
                 it.setFrom(mailProperties.username)
                 it.setText(htmlContent, true)
                 it.setTo(mailProperties.sendTo)
-                it.addInline(IMAGE_STATIC_EMAIL, ClassPathResource("static/penguin.png"))
+                it.addInline(IMAGE_STATIC_EMAIL, ClassPathResource("static/images/penguin.png"))
             }
         mailSender.send(mimeMessage)
     }

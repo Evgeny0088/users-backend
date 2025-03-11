@@ -3,6 +3,10 @@
 <head>
     <title th:text="#{title.email}">Template for registration</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="../../static/css/bootstrap.css" rel="stylesheet"
+          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link href="../../static/css/bootstrap-theme.css"
+          rel="stylesheet">
 </head>
 <body>
 <div>
@@ -10,15 +14,30 @@
         <span><b th:text="|#{title.email(${EmailDto.username})},|"></b><br></span>
         <span th:text="|#{registration.text.first},|"></span>
         <span th:text="|#{registration.text.second}:|"></span><br>
-        <a th:href="@{EmailDto.link}" th:text="#{registration.text.third}"></a>
     </p>
+    <form action="http://localhost:8080/api/v1/test/profile" method="POST">
+        <input type="hidden" name="empName" value="user-2" required>
+        <input type="hidden" name="lastName" value="user-2" required>
+        <input type="hidden" name="email" value="app.user2@gmail.com" required>
+        <input type="hidden" name="birthday" value="1988-02-20" required>
+        <input type="hidden" name="departmentId" value="0194e0ab-74ce-678e-0c29-3d26bfe88003" required>
+        <input type="hidden" name="salary" value="2000" required>
+        <input type="hidden" name="createdAt" value="2025-03-03T00:00:00" required>
+        <button type="submit" th:text="#{registgation.button}"></button>
+    </form>
 </div>
 <p>
-    <img src="../../static/penguin.png" th:src="|cid:${logo}|" />
+    <img src="../../static/images/penguin.png" th:src="|cid:${logo}|" />
 </p>
 <p>
     Regards, <br />
     <em>The Keycloak Team</em>
 </p>
+<script src="../../static/js/bootstrap.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+        crossorigin="anonymous"></script>
+<script src="../../static/js/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+        crossorigin="anonymous"></script>
 </body>
 </html>

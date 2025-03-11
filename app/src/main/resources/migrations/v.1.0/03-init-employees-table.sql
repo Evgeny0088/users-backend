@@ -1,5 +1,5 @@
 create table if not exists employee(
-    id varchar(100) not null primary key,
+    id varchar(100) not null primary key default generate_ulid(),
     emp_name varchar(100) not null,
     last_name varchar(100) not null,
     salary integer,

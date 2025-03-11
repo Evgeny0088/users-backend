@@ -1,6 +1,6 @@
 #!/bin/bash
 APP_IMAGE='docker-image/users-backend:1.0.0'
-MIGRATION_IMAGE='docker-image/users-backend-migration:1.0.0'
+MIGRATION_IMAGE='docker-image/users-backend-migration:1.0.1'
 CHECK_MARK='\xE2\x9C\x94'
 UPSET="\U0001f62D";
 JET="\U0001f680";

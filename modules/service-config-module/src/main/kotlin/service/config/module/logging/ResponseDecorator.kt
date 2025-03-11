@@ -12,7 +12,10 @@ import java.io.ByteArrayOutputStream
 import java.nio.channels.Channels
 import java.nio.charset.StandardCharsets
 
-class ResponseDecorator(response: ServerHttpResponse, private val request: ServerHttpRequest, private val mapper: ObjectMapper): ServerHttpResponseDecorator(response) {
+class ResponseDecorator(
+    response: ServerHttpResponse,
+    private val request: ServerHttpRequest,
+    private val mapper: ObjectMapper): ServerHttpResponseDecorator(response) {
 
     private val log = LoggerProvider.logger<ResponseDecorator>()
 
