@@ -23,7 +23,7 @@ inspect_and_build_image() {
 build_users_backend_image() {
   echo -e "tests are started ... ${JET}"
 
-  if ! ./gradlew clean build; then
+  if ! (./gradlew clean build && ./gradlew mergeCoverageReport); then
     if ! ./gradlew clean build -x test --parallel --debug --no-daemon --info; then
      echo -e "tests are failed... ${UPSET}" && exit $?
     fi

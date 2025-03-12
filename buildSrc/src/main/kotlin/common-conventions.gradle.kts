@@ -31,7 +31,7 @@ tasks.compileTestJava{
     options.encoding = "UTF-8"
 }
 
-tasks.named<Test>("test") {
+tasks.test {
     useJUnitPlatform()
     testLogging {
         events("passed", "failed", "skipped")

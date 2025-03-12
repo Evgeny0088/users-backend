@@ -14,5 +14,4 @@ tasks.jacocoTestReport {
         xml.required = false
         csv.required = false
     }
-    dependsOn(tasks.test)
 }

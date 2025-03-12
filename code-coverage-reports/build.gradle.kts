@@ -11,7 +11,7 @@ repositories {
 
 val projectsWithCoverage = listOf(":modules", ":app").map(::project).flatMap { it.subprojects }
 
-val testCoverageReport by tasks.creating(JacocoReport::class) {
+val mergeCoverageReport by tasks.creating(JacocoReport::class) {
     description = "Collecting all jacoco reports in one file."
     group = "coverage"
     projectsWithCoverage.forEach {
@@ -34,4 +34,8 @@ val testCoverageReport by tasks.creating(JacocoReport::class) {
         html.outputLocation.set(file("${project.layout.buildDirectory.get()}/${Constants.jacocoMergedReportsPath}/html"))
         csv.required.set(false)
     }
+}
+
+tasks.jar {
+    enabled = false
 }
