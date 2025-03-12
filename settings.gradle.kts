@@ -19,3 +19,4 @@ fun includeNestedModules(vararg modules: String) {
 
 include("app")
 includeNestedModules("modules")
+include("code-coverage-reports")

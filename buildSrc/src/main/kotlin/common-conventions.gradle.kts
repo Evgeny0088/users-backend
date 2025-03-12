@@ -2,6 +2,7 @@
 plugins {
     id("org.jetbrains.kotlin.jvm")
     id("detekt-conventions")
+    id("jacoco-conventions")
     java
 }
 
@@ -35,4 +36,5 @@ tasks.named<Test>("test") {
     testLogging {
         events("passed", "failed", "skipped")
     }
+    finalizedBy(tasks.jacocoTestReport)
 }
